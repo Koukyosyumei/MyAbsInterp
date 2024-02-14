@@ -15,6 +15,7 @@ data Exp = Const Int
     | GEq Exp Exp
     | If Exp Exp Exp
     | Call String [Exp]
+    | StrictCall String [Exp]
 
 data FunDef = FunDef String [String] Exp
 data Program = FunDefs [FunDef]
@@ -57,3 +58,20 @@ evalExp (Call fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Nothing
         Just f  -> f (map (\a -> evalExp a phi env) args)
+evalExp (StrictCall fname args) phi env =
+    case (lookup fname phi) of
+        Nothing -> Nothing
+        Just f  -> strict f (map (\a -> evalExp a phi env) args)
+    where 
+        strict :: ([D] -> D) -> [D] -> D
+        strict f args = 
+            if noneIsNothing args
+                then f args
+                else Nothing
+
+noneIsNothing :: [D] -> Bool
+noneIsNothing = all isJust
+  where
+    isJust :: Maybe a -> Bool
+    isJust (Just _) = True
+    isJust Nothing  = False
