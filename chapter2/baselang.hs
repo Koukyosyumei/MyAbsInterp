@@ -1,4 +1,4 @@
-import Debug.Trace
+module BaseLang where
 
 type V = Int
 type D = Maybe Int
@@ -20,17 +20,17 @@ data FunDef = FunDef String [String] Exp
 data Program = FunDefs [FunDef]
 
 -- evalProgram :: Program -> Env -> Phi
--- update :: String -> 
+-- update :: String ->
 update :: FunDef -> Phi -> Phi
-update (FunDef s args exp) phi = 
+update (FunDef s args exp) phi =
     let innerphi = [(s, \params -> evalExp exp (update (FunDef s args exp) phi) (zip args params))]
     in innerphi ++ phi
 
 evalExp :: Exp -> Phi -> Env -> D
 evalExp (Const x) _ _ = Just x
-evalExp (Var key) _ env = 
-    case lookup key env of 
-        Nothing -> Nothing
+evalExp (Var key) _ env =
+    case lookup key env of
+        Nothing     -> Nothing
         Just result -> result
 evalExp (Add x y) phi env = (+) <$> (evalExp x phi env) <*> (evalExp y phi env)
 evalExp (Sub x y) phi env = (-) <$> (evalExp x phi env) <*> (evalExp y phi env)
@@ -53,20 +53,7 @@ evalExp (If cond thenBranch elseBranch) phi env =
     case evalExp cond phi env of
         Nothing -> Nothing
         Just x  -> evalExp (if x == 0 then elseBranch else thenBranch) phi env
-evalExp (Call fname args) phi env = 
-    case (lookup fname phi) of 
+evalExp (Call fname args) phi env =
+    case (lookup fname phi) of
         Nothing -> Nothing
-        Just f -> f (map (\a -> evalExp a phi env) args)
-
-fac :: FunDef
-fac = FunDef "fac" ["n"] (If (Eq (Var "n") (Const 0)) (Const 1) (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))])))
-
-phi :: Phi
-phi = update fac []
-
-main :: IO ()
-main = do
-    case phi of 
-        (k, f):_ -> putStrLn $ show (f [Just 4])
-    let result = evalExp (Call "fac" [Const 5] ) phi []
-    putStrLn $ "Result: " ++ show result
+        Just f  -> f (map (\a -> evalExp a phi env) args)
