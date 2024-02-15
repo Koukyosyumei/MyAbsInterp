@@ -18,11 +18,6 @@ One ∨ _ = One
 _ ∨ One = One
 _ ∨ _   = Zero
 
-(<=) :: ATwo -> ATwo -> Bool
-Zero <= _ = True
-_ <= One = True
-_ <= _ = False
-
 type AEnv = [(String, ATwo)]
 type APhi = [(String, [ATwo] -> ATwo)]
 
@@ -50,11 +45,20 @@ evalAExp (If cond thenBranch elseBranch) phi env = c ∧ (t ∨ e)
         c = evalAExp cond phi env
         t = evalAExp thenBranch phi env
         e = evalAExp elseBranch phi env
+    case evalAExp cond phi env of
+        Nothing -> Nothing
+        Just x  -> evalExp (if x == 0 then elseBranch else thenBranch) phi env
 evalAExp (Call fname args) phi env =
     case (lookup fname phi) of
-        Nothing -> Zero
-        Just f  -> f (map (\a -> evalAExp a phi env) args)
+        Nothing -> Nothing
+        Just f  -> f (map (\a -> evalExp a phi env) args)
 evalAExp (StrictCall fname args) phi env =
     case (lookup fname phi) of
-        Nothing -> Zero
-        Just f  -> foldl (∧) One (map (\a -> evalAExp a phi env) args)
+        Nothing -> Nothing
+        Just f  -> strict f (map (\a -> evalExp a phi env) args)
+    where 
+        strict :: ([D] -> D) -> [D] -> D
+        strict f args = 
+            if noneIsNothing args
+                then f args
+                else Nothing

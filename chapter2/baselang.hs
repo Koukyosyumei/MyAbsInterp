@@ -20,7 +20,7 @@ data Exp = Const Int
 data FunDef = FunDef String [String] Exp
 data Program = FunDefs [FunDef]
 
--- evalProgram :: Program -> Env -> Phi
+-- evalProgram :: Program -> [D] -> D
 -- update :: String ->
 update :: FunDef -> Phi -> Phi
 update (FunDef s args exp) phi =
