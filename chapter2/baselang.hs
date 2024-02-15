@@ -15,16 +15,24 @@ data Exp = Const Int
     | GEq Exp Exp
     | If Exp Exp Exp
     | Call String [Exp]
-    | StrictCall String [Exp]
+    | StrictCall String [Exp] deriving(Show)
 
-data FunDef = FunDef String [String] Exp
-data Program = FunDefs [FunDef]
+data FunDef = FunDef String [String] Exp deriving(Show)
 
--- evalProgram :: Program -> [D] -> D
--- update :: String ->
-update :: FunDef -> Phi -> Phi
-update (FunDef s args exp) phi =
-    let innerphi = [(s, \params -> evalExp exp (update (FunDef s args exp) phi) (zip args params))]
+evalProgram :: [FunDef] -> Phi
+evalProgram funcs = fix (\phi -> applyFunDefs funcs phi)
+    where
+        fix :: (a -> a) -> a
+        fix f = f (fix f)
+
+applyFunDefs :: [FunDef] -> Phi -> Phi
+applyFunDefs [] phi = phi
+applyFunDefs ((FunDef s args exp):rest) phi =
+    applyFunDefs rest ((s, \params -> evalExp exp (updateFunDefs (FunDef s args exp) phi) (zip args params)) : phi)
+
+updateFunDefs :: FunDef -> Phi -> Phi
+updateFunDefs (FunDef s args exp) phi =
+    let innerphi = [(s, \params -> evalExp exp (updateFunDefs (FunDef s args exp) phi) (zip args params))]
     in innerphi ++ phi
 
 evalExp :: Exp -> Phi -> Env -> D
@@ -39,17 +47,11 @@ evalExp (Mul x y) phi env = (*) <$> (evalExp x phi env) <*> (evalExp y phi env)
 evalExp (Eq x y)  phi env = deq (evalExp x phi env) (evalExp y phi env)
     where
         deq :: D -> D -> D
-        deq (Just a) (Just b) =
-            if a == b
-                then Just 1
-                else Just 0
+        deq (Just a) (Just b) = if a == b then Just 1 else Just 0
 evalExp (GEq x y) phi env = dgeq (evalExp x phi env) (evalExp y phi env)
     where
         dgeq :: D -> D -> D
-        dgeq (Just a) (Just b) =
-            if a >= b
-                then Just 1
-                else Just 0
+        dgeq (Just a) (Just b) = if a >= b then Just 1 else Just 0
 evalExp (If cond thenBranch elseBranch) phi env =
     case evalExp cond phi env of
         Nothing -> Nothing
@@ -62,12 +64,10 @@ evalExp (StrictCall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Nothing
         Just f  -> strict f (map (\a -> evalExp a phi env) args)
-    where 
+    where
         strict :: ([D] -> D) -> [D] -> D
-        strict f args = 
-            if noneIsNothing args
-                then f args
-                else Nothing
+        strict f args =
+            if noneIsNothing args then f args else Nothing
 
 noneIsNothing :: [D] -> Bool
 noneIsNothing = all isJust

@@ -6,10 +6,11 @@ fac = FunDef "fac" ["n"] (If (Eq (Var "n") (Const 0))
                              (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))])))
 
 phi :: Phi
-phi = update fac []
+phi = updateFunDefs fac []
 
 main :: IO ()
 main = do
+    putStrLn $ show fac
     case phi of
         (k, f):_ -> putStrLn $ show (f [Just 4])
     let result = evalExp (Call "fac" [Const 5] ) phi []
