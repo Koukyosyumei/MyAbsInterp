@@ -2,9 +2,15 @@ module AbstLang where
 
 import           BaseLang
 import qualified Data.HashMap.Strict as HashMap
-import           Data.Hashable       (Hashable)
+import           Data.Hashable
+import           FixedPointIteration
+
 
 data ATwo = Zero | One deriving(Eq, Show)
+instance Hashable ATwo where
+    hashWithSalt salt Zero = hashWithSalt salt (0 :: Int)
+    hashWithSalt salt One  = hashWithSalt salt (1 :: Int)
+
 
 alpha :: D -> ATwo
 alpha Nothing = Zero
@@ -70,10 +76,7 @@ evalAExp (Call fname args) phi env =
 evalAExp (FPICall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> f (map (\a -> evalAExp a phi env) args) empty
-    where
-        empty :: HashMap.HashMap [ATwo] ATwo
-        empty = HashMap.empty
+        Just f  -> evalWithFPI f (map (\a -> evalAExp a phi env) args) [Zero, One] Zero
 evalAExp (StrictCall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero

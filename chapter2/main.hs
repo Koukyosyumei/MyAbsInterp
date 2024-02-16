@@ -16,8 +16,19 @@ funDefs =
                              (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))]))),
     FunDef "g" ["x", "y"] (If (Eq (Var "y") (Const 0))
                                 (Var "x")
-                                (Call "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)]))
+                                (FPICall "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)]))
   ]
+
+g' :: [Int] -> HashMap.HashMap [Int] Int -> Int
+g' (x:y:rest) table = min y (max x (HashMap.lookupDefault 0 [x, y] table))
+
+ga :: [ATwo] -> HashMap.HashMap [ATwo] ATwo -> ATwo
+ga (x:y:rest) table = y ∧ (x ∨ (HashMap.lookupDefault Zero [x, y] table))
+
+f' :: [Int] -> HashMap.HashMap [Int] Int -> Int
+f' (x:y:z:rest) table =
+  let t = HashMap.lookupDefault 0 [y, 1, 1] table
+  in max (min y z) (HashMap.lookupDefault 0 [z, x, t] table)
 
 -- Define the expressions
 
@@ -31,7 +42,7 @@ exp3 :: Exp
 exp3 = Call "fac" [Var "x"]
 
 exp4 :: Exp
-exp4 = Call "g" [Var "x", Var "y"]
+exp4 = FPICall "g" [Var "x", Var "y"]
 
 -- Evaluate the function definitions
 
@@ -61,20 +72,28 @@ result5 = evalAExp exp4 funAPhi [("x", One), ("y", Zero)]
 result6 :: ATwo
 result6 = evalAExp exp4 funAPhi [("x", Zero), ("y", One)]
 
-g' :: [Int] -> HashMap.HashMap [Int] Int -> Int
-g' (x:y:rest) table = min y (max x (HashMap.lookupDefault 0 [x, y] table))
-
-f' :: [Int] -> HashMap.HashMap [Int] Int -> Int
-f' (x:y:z:rest) table =
-  let t = HashMap.lookupDefault 0 [y, 1, 1] table
-  in max (min y z) (HashMap.lookupDefault 0 [z, x, t] table)
-
 main :: IO ()
 main = do
     let tableG = HashMap.fromList [([0, 0], 0), ([1, 0], 0), ([0, 1], 0), ([1, 1], 0)]
         resultG = fixedpointIteration g' tableG 0
     putStrLn $ "Iterations for g: " ++ show (fst resultG)
     print (snd resultG)
+
+    putStrLn $ "evalFPI: " ++ show (evalWithFPI g' [1, 1] [0, 1] 0)
+    putStrLn $ "evalFPI: " ++ show (evalWithFPI ga [Zero, One] [Zero, One] Zero)
+
+    -- let aresult' = case (lookup "g" funPhi) of
+    --                    Nothing -> Nothing
+    --                    Just z  -> z [Just 1, Just 1]
+    -- putStrLn $ "aaaaaaaaTTTTTTTT: " ++ show aresult'
+
+    let result' = case (lookup "g" funAPhi) of
+                        Nothing -> Zero
+                        Just z  -> z [Zero, One] empty
+                    where
+                        empty :: HashMap.HashMap [ATwo] ATwo
+                        empty = HashMap.empty
+    putStrLn $ "TTTTTTTT: " ++ show result'
 
     let tableF =
             HashMap.fromList
@@ -94,6 +113,6 @@ main = do
     putStrLn $ "Result1: " ++ show result1
     putStrLn $ "Result2: " ++ show result2
     putStrLn $ "Result3: " ++ show result3
-    putStrLn $ "Result4: " ++ show result4
+    -- putStrLn $ "Result4: " ++ show result4
     putStrLn $ "Result5: " ++ show result5
     -- putStrLn $ "Result6: " ++ show result6
