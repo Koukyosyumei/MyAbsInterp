@@ -48,10 +48,12 @@ evalExp (Eq x y)  phi env = deq (evalExp x phi env) (evalExp y phi env)
     where
         deq :: D -> D -> D
         deq (Just a) (Just b) = if a == b then Just 1 else Just 0
+        deq _ _ = Just 0
 evalExp (GEq x y) phi env = dgeq (evalExp x phi env) (evalExp y phi env)
     where
         dgeq :: D -> D -> D
         dgeq (Just a) (Just b) = if a >= b then Just 1 else Just 0
+        dgeq _ _ = Just 0
 evalExp (If cond thenBranch elseBranch) phi env =
     case evalExp cond phi env of
         Nothing -> Nothing

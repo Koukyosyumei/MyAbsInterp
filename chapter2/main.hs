@@ -27,7 +27,7 @@ exp3 :: Exp
 exp3 = Call "fac" [Var "x"]
 
 exp4 :: Exp
-exp4 = Call "g" [Const 1, Const 0]
+exp4 = Call "g" [Var "x", Var "y"]
 
 -- Evaluate the function definitions
 
@@ -49,10 +49,13 @@ result3 :: D
 result3 = evalExp exp3 funPhi [("x", Just 4)]
 
 result4 :: D
-result4 = evalExp exp4 funPhi []
+result4 = evalExp exp4 funPhi [("x", Just 4), ("y", Just 3)]
 
 result5 :: ATwo
-result5 = evalAExp exp4 funAPhi []
+result5 = evalAExp exp4 funAPhi [("x", One), ("y", Zero)]
+
+result6 :: ATwo
+result6 = evalAExp exp4 funAPhi [("x", Zero), ("y", One)]
 
 main :: IO ()
 main = do
@@ -61,3 +64,4 @@ main = do
     putStrLn $ "Result3: " ++ show result3
     putStrLn $ "Result4: " ++ show result4
     putStrLn $ "Result5: " ++ show result5
+    putStrLn $ "Result6: " ++ show result6

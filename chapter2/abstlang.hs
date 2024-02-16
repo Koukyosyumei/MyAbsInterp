@@ -51,16 +51,8 @@ evalAExp (Var key) _ env =
 evalAExp (Add x y) phi env = (evalAExp x phi env) ∧ (evalAExp y phi env)
 evalAExp (Sub x y) phi env = (evalAExp x phi env) ∧ (evalAExp y phi env)
 evalAExp (Mul x y) phi env = (evalAExp x phi env) ∧ (evalAExp y phi env)
-evalAExp (Eq x y)  phi env = deq (evalAExp x phi env) (evalAExp y phi env)
-    where
-        deq :: ATwo -> ATwo -> ATwo
-        deq a b = if a == b then One else Zero
-evalAExp (GEq x y) phi env = dgeq (evalAExp x phi env) (evalAExp y phi env)
-    where
-        dgeq :: ATwo -> ATwo -> ATwo
-        dgeq One _    = One
-        dgeq Zero One = One
-        dgeq _ _      = Zero
+evalAExp (Eq x y)  phi env = (evalAExp x phi env) ∧ (evalAExp y phi env)
+evalAExp (GEq x y) phi env = (evalAExp x phi env) ∧ (evalAExp y phi env)
 evalAExp (If cond thenBranch elseBranch) phi env = c ∧ (t ∨ e)
     where
         c = evalAExp cond phi env
