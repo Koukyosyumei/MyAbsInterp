@@ -26,7 +26,7 @@ _ <= One  = True
 _ <= _    = False
 
 type AEnv = [(String, ATwo)]
-type APhi = [(String, [ATwo] -> ATwo)]
+type APhi = [(String, [ATwo] -> HashMap.HashMap [ATwo] ATwo -> ATwo)]
 
 evalAProgram :: [FunDef] -> APhi
 evalAProgram funcs = fix (\phi -> applyAFunDefs funcs phi)
@@ -37,11 +37,11 @@ evalAProgram funcs = fix (\phi -> applyAFunDefs funcs phi)
 applyAFunDefs :: [FunDef] -> APhi -> APhi
 applyAFunDefs [] phi = phi
 applyAFunDefs ((FunDef s args exp):rest) phi =
-    applyAFunDefs rest ((s, \params -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params)) : phi)
+    applyAFunDefs rest ((s, \params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params)) : phi)
 
 updateAFunDefs :: FunDef -> APhi -> APhi
 updateAFunDefs (FunDef s args exp) phi =
-    let innerphi = [(s, \params -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params))]
+    let innerphi = [(s, \params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params))]
     in innerphi ++ phi
 
 evalAExp :: Exp -> APhi -> AEnv -> ATwo
@@ -63,7 +63,17 @@ evalAExp (If cond thenBranch elseBranch) phi env = c ∧ (t ∨ e)
 evalAExp (Call fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> f (map (\a -> evalAExp a phi env) args)
+        Just f  -> f (map (\a -> evalAExp a phi env) args) empty
+    where
+        empty :: HashMap.HashMap [ATwo] ATwo
+        empty = HashMap.empty
+evalAExp (FPICall fname args) phi env =
+    case (lookup fname phi) of
+        Nothing -> Zero
+        Just f  -> f (map (\a -> evalAExp a phi env) args) empty
+    where
+        empty :: HashMap.HashMap [ATwo] ATwo
+        empty = HashMap.empty
 evalAExp (StrictCall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero
