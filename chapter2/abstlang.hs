@@ -89,3 +89,16 @@ evalAExpMemo (StrictCall fname args) memo phi env =
     case (lookup fname phi) of
         Nothing -> Zero
         Just f  -> foldl (∧) One (map (\a -> evalAExpMemo a memo phi env) args)
+
+
+transformExpWithMemo :: Exp -> Exp
+transformExpWithMemo (Const n) = Const n
+transformExpWithMemo (Var s) = Var s
+transformExpWithMemo (Add x y) = Add (transformExpWithMemo x) (transformExpWithMemo y)
+transformExpWithMemo (Sub x y) = Sub (transformExpWithMemo x) (transformExpWithMemo y)
+transformExpWithMemo (Mul x y) = Mul (transformExpWithMemo x) (transformExpWithMemo y)
+transformExpWithMemo (Eq x y) = Eq (transformExpWithMemo x) (transformExpWithMemo y)
+transformExpWithMemo (GEq x y) = GEq (transformExpWithMemo x) (transformExpWithMemo y)
+transformExpWithMemo (If cond te ee) = If (transformExpWithMemo cond) (transformExpWithMemo te) (transformExpWithMemo ee)
+transformExpWithMemo (Call fname args) = MemoCall fname args
+transformExpWithMemo (StrictCall fname args) = StrictCall fname (map (\a -> transformExpWithMemo a) args)
