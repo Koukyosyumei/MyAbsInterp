@@ -67,13 +67,13 @@ result4 :: D
 result4 = evalExp exp4 funPhi [("x", Just 4), ("y", Just 3)]
 
 result5 :: ATwo
-result5 = evalAExp exp4 emptyMemo funAPhi [("x", One), ("y", Zero)]
+result5 = evalAExp exp4 funAPhi [("x", One), ("y", Zero)]
 
 result6 :: ATwo
-result6 = evalAExp exp4 emptyMemo funAPhi [("x", Zero), ("y", One)]
+result6 = evalAExp exp4 funAPhi [("x", Zero), ("y", One)]
 
 result7 :: ATwo
-result7 = evalAExp exp4 emptyMemo funAPhi [("x", One), ("y", One)]
+result7 = evalAExp exp4 funAPhi [("x", One), ("y", One)]
 
 main :: IO ()
 main = do

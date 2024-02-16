@@ -47,42 +47,45 @@ evalAProgram funcs = fix (\phi -> applyAFunDefs funcs phi)
 applyAFunDefs :: [FunDef] -> APhi -> APhi
 applyAFunDefs [] phi = phi
 applyAFunDefs ((FunDef s args exp):rest) phi =
-    applyAFunDefs rest ((s, (\params table -> evalAExp exp table (updateAFunDefs (FunDef s args exp) phi) (zip args params))) : phi)
+    applyAFunDefs rest ((s, (\params table -> evalAExpMemo exp table (updateAFunDefs (FunDef s args exp) phi) (zip args params))) : phi)
 
 updateAFunDefs :: FunDef -> APhi -> APhi
 updateAFunDefs (FunDef s args exp) phi =
-    let innerphi = [(s, (\params table -> evalAExp exp table (updateAFunDefs (FunDef s args exp) phi) (zip args params)))]
+    let innerphi = [(s, (\params table -> evalAExpMemo exp table (updateAFunDefs (FunDef s args exp) phi) (zip args params)))]
     in innerphi ++ phi
 
-evalAExp :: Exp -> Memo -> APhi -> AEnv -> ATwo
-evalAExp (Const _) _ _ _ = One
-evalAExp (Var key) _ _ env =
+evalAExp :: Exp -> APhi -> AEnv -> ATwo
+evalAExp exp phi env = evalAExpMemo exp emptyMemo phi env
+
+evalAExpMemo :: Exp -> Memo -> APhi -> AEnv -> ATwo
+evalAExpMemo (Const _) _ _ _ = One
+evalAExpMemo (Var key) _ _ env =
     case lookup key env of
         Nothing     -> Zero
         Just result -> result
-evalAExp (Add x y) memo phi env = (evalAExp x memo phi env) ∧ (evalAExp y memo phi env)
-evalAExp (Sub x y) memo phi env = (evalAExp x memo phi env) ∧ (evalAExp y memo phi env)
-evalAExp (Mul x y) memo phi env = (evalAExp x memo phi env) ∧ (evalAExp y memo phi env)
-evalAExp (Eq x y)  memo phi env = (evalAExp x memo phi env) ∧ (evalAExp y memo phi env)
-evalAExp (GEq x y) memo phi env = (evalAExp x memo phi env) ∧ (evalAExp y memo phi env)
-evalAExp (If cond thenBranch elseBranch) memo phi env = c ∧ (t ∨ e)
+evalAExpMemo (Add x y) memo phi env = (evalAExpMemo x memo phi env) ∧ (evalAExpMemo y memo phi env)
+evalAExpMemo (Sub x y) memo phi env = (evalAExpMemo x memo phi env) ∧ (evalAExpMemo y memo phi env)
+evalAExpMemo (Mul x y) memo phi env = (evalAExpMemo x memo phi env) ∧ (evalAExpMemo y memo phi env)
+evalAExpMemo (Eq x y)  memo phi env = (evalAExpMemo x memo phi env) ∧ (evalAExpMemo y memo phi env)
+evalAExpMemo (GEq x y) memo phi env = (evalAExpMemo x memo phi env) ∧ (evalAExpMemo y memo phi env)
+evalAExpMemo (If cond thenBranch elseBranch) memo phi env = c ∧ (t ∨ e)
     where
-        c = evalAExp cond memo phi env
-        t = evalAExp thenBranch memo phi env
-        e = evalAExp elseBranch memo phi env
-evalAExp (Call fname args) memo phi env =
+        c = evalAExpMemo cond memo phi env
+        t = evalAExpMemo thenBranch memo phi env
+        e = evalAExpMemo elseBranch memo phi env
+evalAExpMemo (Call fname args) memo phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> f (map (\a -> evalAExp a memo phi env) args) emptyMemo
-evalAExp (MemoCall fname args) memo phi env =
+        Just f  -> f (map (\a -> evalAExpMemo a memo phi env) args) emptyMemo
+evalAExpMemo (MemoCall fname args) memo phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just _ -> HashMap.lookupDefault Zero (map (\a -> evalAExp a memo phi env) args) memo
-evalAExp (FPICall fname args) memo phi env =
+        Just _ -> HashMap.lookupDefault Zero (map (\a -> evalAExpMemo a memo phi env) args) memo
+evalAExpMemo (FPICall fname args) memo phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> evalWithFPI f (map (\a -> evalAExp a memo phi env) args) [Zero, One] Zero
-evalAExp (StrictCall fname args) memo phi env =
+        Just f  -> evalWithFPI f (map (\a -> evalAExpMemo a memo phi env) args) [Zero, One] Zero
+evalAExpMemo (StrictCall fname args) memo phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> foldl (∧) One (map (\a -> evalAExp a memo phi env) args)
+        Just f  -> foldl (∧) One (map (\a -> evalAExpMemo a memo phi env) args)
