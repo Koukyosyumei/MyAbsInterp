@@ -67,10 +67,13 @@ result4 :: D
 result4 = evalExp exp4 funPhi [("x", Just 4), ("y", Just 3)]
 
 result5 :: ATwo
-result5 = evalAExp exp4 funAPhi [("x", One), ("y", Zero)]
+result5 = evalAExp exp4 emptyMemo funAPhi [("x", One), ("y", Zero)]
 
 result6 :: ATwo
-result6 = evalAExp exp4 funAPhi [("x", Zero), ("y", One)]
+result6 = evalAExp exp4 emptyMemo funAPhi [("x", Zero), ("y", One)]
+
+result7 :: ATwo
+result7 = evalAExp exp4 emptyMemo funAPhi [("x", One), ("y", One)]
 
 main :: IO ()
 main = do
@@ -89,7 +92,7 @@ main = do
 
     let result' = case (lookup "g" funAPhi) of
                         Nothing -> Zero
-                        Just (z, _)  -> z [Zero, One] empty
+                        Just z  -> z [Zero, One] empty
                     where
                         empty :: HashMap.HashMap [ATwo] ATwo
                         empty = HashMap.empty
@@ -116,3 +119,4 @@ main = do
     -- putStrLn $ "Result4: " ++ show result4
     putStrLn $ "Result5: " ++ show result5
     putStrLn $ "Result6: " ++ show result6
+    putStrLn $ "Result7: " ++ show result7
