@@ -15,6 +15,7 @@ data Exp = Const Int
     | GEq Exp Exp
     | If Exp Exp Exp
     | Call String [Exp]
+    | MemoCall String [Exp]
     | StrictCall String [Exp] deriving(Show)
 
 data FunDef = FunDef String [String] Exp deriving(Show)

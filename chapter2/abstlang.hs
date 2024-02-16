@@ -1,6 +1,8 @@
 module AbstLang where
 
 import           BaseLang
+import qualified Data.HashMap.Strict as HashMap
+import           Data.Hashable       (Hashable)
 
 data ATwo = Zero | One deriving(Eq, Show)
 
