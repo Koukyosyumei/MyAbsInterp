@@ -31,8 +31,12 @@ Zero <= _ = True
 _ <= One  = True
 _ <= _    = False
 
+type Memo = HashMap.HashMap [ATwo] ATwo
 type AEnv = [(String, ATwo)]
-type APhi = [(String, [ATwo] -> HashMap.HashMap [ATwo] ATwo -> ATwo)]
+type APhi = [(String, ([ATwo] -> Memo -> ATwo, Memo))]
+
+emptyMemo :: Memo
+emptyMemo = HashMap.empty
 
 evalAProgram :: [FunDef] -> APhi
 evalAProgram funcs = fix (\phi -> applyAFunDefs funcs phi)
@@ -43,11 +47,13 @@ evalAProgram funcs = fix (\phi -> applyAFunDefs funcs phi)
 applyAFunDefs :: [FunDef] -> APhi -> APhi
 applyAFunDefs [] phi = phi
 applyAFunDefs ((FunDef s args exp):rest) phi =
-    applyAFunDefs rest ((s, \params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params)) : phi)
+    applyAFunDefs rest ((s, (\params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params), emptyMemo)) : phi)
 
 updateAFunDefs :: FunDef -> APhi -> APhi
 updateAFunDefs (FunDef s args exp) phi =
-    let innerphi = [(s, \params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params))]
+    let innerphi = [(s, 
+                    (\params table -> evalAExp exp (updateAFunDefs (FunDef s args exp) phi) (zip args params),
+                     emptyMemo))]
     in innerphi ++ phi
 
 evalAExp :: Exp -> APhi -> AEnv -> ATwo
@@ -69,14 +75,18 @@ evalAExp (If cond thenBranch elseBranch) phi env = c ∧ (t ∨ e)
 evalAExp (Call fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> f (map (\a -> evalAExp a phi env) args) empty
+        Just (f, _)  -> f (map (\a -> evalAExp a phi env) args) empty
     where
         empty :: HashMap.HashMap [ATwo] ATwo
         empty = HashMap.empty
+evalAExp (MemoCall fname args) phi env = 
+    case (lookup fname phi) of
+        Nothing -> Zero
+        Just (_, memo) -> HashMap.lookupDefault Zero (map (\a -> evalAExp a phi env) args) memo
 evalAExp (FPICall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero
-        Just f  -> evalWithFPI f (map (\a -> evalAExp a phi env) args) [Zero, One] Zero
+        Just (f, _)  -> evalWithFPI f (map (\a -> evalAExp a phi env) args) [Zero, One] Zero
 evalAExp (StrictCall fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Zero

@@ -16,7 +16,7 @@ funDefs =
                              (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))]))),
     FunDef "g" ["x", "y"] (If (Eq (Var "y") (Const 0))
                                 (Var "x")
-                                (FPICall "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)]))
+                                (MemoCall "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)]))
   ]
 
 g' :: [Int] -> HashMap.HashMap [Int] Int -> Int
@@ -89,7 +89,7 @@ main = do
 
     let result' = case (lookup "g" funAPhi) of
                         Nothing -> Zero
-                        Just z  -> z [Zero, One] empty
+                        Just (z, _)  -> z [Zero, One] empty
                     where
                         empty :: HashMap.HashMap [ATwo] ATwo
                         empty = HashMap.empty
@@ -115,4 +115,4 @@ main = do
     putStrLn $ "Result3: " ++ show result3
     -- putStrLn $ "Result4: " ++ show result4
     putStrLn $ "Result5: " ++ show result5
-    -- putStrLn $ "Result6: " ++ show result6
+    putStrLn $ "Result6: " ++ show result6
