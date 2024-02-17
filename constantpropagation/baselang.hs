@@ -54,15 +54,15 @@ subD (Bottom:_:_) = Bottom
 subD (_:Bottom:_) = Bottom
 
 mulD :: [D] -> D 
-mulD (N x) (N y) = N (x * y)
-mulD Bottom _ = Bottom
-mulD _ Bottom = Bottom
+mulD ((N x):(N y):_) = N (x * y)
+mulD (Bottom:_:_) = Bottom
+mulD (_:Bottom:_) = Bottom
 
 eqD :: [D] -> D
-eqD (N x) (N y) = B (x == y)
-eqD (B x) (B y) = B (x == y)
-eqD Bottom _ = Bottom
-eqD _ Bottom = Bottom
+eqD ((N x):(N y):_) = B (x == y)
+eqD ((B x):(B y):_) = B (x == y)
+eqD (Bottom:_:_) = Bottom
+eqD (_:Bottom:_) = Bottom
 
 -- | Signature mappings for basic functions
 basicPhi :: Phi
@@ -78,16 +78,24 @@ evalExp (Var key) _ env =
     case lookup key env of
         Nothing     -> Bottom
         Just result -> result
+evalExp (BasicFn fname args) phi env = 
+    case (lookup fname basicPhi) of
+        Nothing -> Bottom
+        Just f -> sanitize f (map (\a -> evalExp a phi env) args)
+    where
+        sanitize :: ([D] -> D) -> [D] -> D
+        sanitize f args =
+            if noneIsTop args then f args else Top
 evalExp (Call fname args) phi env =
     case (lookup fname phi) of
         Nothing -> Bottom
         Just f  -> f (map (\a -> evalExp a phi env) args)
 
 -- | Checks if all elements in the list are not 'Nothing'.
-noneIsNothing :: [D]  -- ^ List of 'D' values.
-              -> Bool -- ^ 'True' if all elements are 'Just', 'False' otherwise.
-noneIsNothing = all isJust
+noneIsTop :: [D]  -- ^ List of 'D' values.
+              -> Bool -- ^ 'True' if there is at least one 'Top' in the input list.
+noneIsTop = any isTop
   where
-    isJust :: Maybe a -> Bool
-    isJust (Just _) = True
-    isJust Nothing  = False
+    isTop :: D -> Bool
+    isTop Top = True
+    isTop _  = False
