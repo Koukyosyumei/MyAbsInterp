@@ -5,25 +5,31 @@ import           FixedPointIteration
 import qualified Data.HashMap.Strict as HashMap
 import           Data.Hashable       (Hashable)
 
+-- Define the function expressions
+add :: Exp
+add = Add (Var "x") (Var "y")
+
+fac :: Exp
+fac = If (Eq (Var "n") (Const 0))
+         (Const 1)
+         (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))]))
+g :: Exp
+g = If (Eq (Var "y") (Const 0))
+       (Var "x")
+       (Call "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)])
+
 -- Define the function definitions
 funDefs :: [FunDef]
 funDefs =
-  [ FunDef "add" ["x", "y"] (Add (Var "x") (Var "y")),
-    FunDef "subtract" ["x", "y"] (Sub (Var "x") (Var "y")),
-    FunDef "multiply" ["x", "y"] (Mul (Var "x") (Var "y")),
-    FunDef "fac" ["n"] (If (Eq (Var "n") (Const 0))
-                             (Const 1)
-                             (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))]))),
-    FunDef "g" ["x", "y"] (If (Eq (Var "y") (Const 0))
-                                (Var "x")
-                                (MemoCall "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)]))
+  [ FunDef "add" ["x", "y"] add,
+    FunDef "fac" ["n"] fac,
+    FunDef "g" ["x", "y"] g,
+    FunDef "g'" ["x", "y"] (transformExpWithMemo g)
   ]
 
+-- Define the demo functions for fixed point iteration
 g' :: [Int] -> HashMap.HashMap [Int] Int -> Int
 g' (x:y:rest) table = min y (max x (HashMap.lookupDefault 0 [x, y] table))
-
-ga :: [ATwo] -> HashMap.HashMap [ATwo] ATwo -> ATwo
-ga (x:y:rest) table = y ∧ (x ∨ (HashMap.lookupDefault Zero [x, y] table))
 
 f' :: [Int] -> HashMap.HashMap [Int] Int -> Int
 f' (x:y:z:rest) table =
@@ -32,17 +38,17 @@ f' (x:y:z:rest) table =
 
 -- Define the expressions
 
-exp1 :: Exp
-exp1 = Add (Const 3) (Call "add" [Const 4, Const 5])
+callAdd :: Exp
+callAdd = Add (Const 3) (Call "add" [Const 4, Const 5])
 
-exp2 :: Exp
-exp2 = Call "fac" [Const 5]
+callFacConst :: Exp
+callFacConst = Call "fac" [Const 5]
 
-exp3 :: Exp
-exp3 = Call "fac" [Var "x"]
+callFacVar :: Exp
+callFacVar = Call "fac" [Var "x"]
 
-exp4 :: Exp
-exp4 = FPICall "g" [Var "x", Var "y"]
+fpicallG' :: Exp
+fpicallG' = FPICall "g'" [Var "x", Var "y"]
 
 -- Evaluate the function definitions
 
@@ -53,6 +59,32 @@ funAPhi :: APhi
 funAPhi = evalAProgram funDefs
 
 -- Evaluate the expressions
+
+main :: IO ()
+main = do
+    putStrLn $ "Demonstration of Fixed Point Iteration"
+    let tableG = HashMap.fromList [([0, 0], 0), ([1, 0], 0), ([0, 1], 0), ([1, 1], 0)]
+        resultG = fixedpointIteration g' tableG 0
+    putStrLn $ "Iterations for g: " ++ show (fst resultG)
+    print (snd resultG)
+
+    let tableF =
+            HashMap.fromList
+            [ ([0, 0, 0], 0),
+            ([0, 0, 1], 0),
+            ([0, 1, 0], 0),
+            ([0, 1, 1], 0),
+            ([1, 0, 0], 0),
+            ([1, 0, 1], 0),
+            ([1, 1, 0], 0),
+            ([1, 1, 1], 0)
+            ]
+        resultF = fixedpointIteration f' tableF 0
+    putStrLn $ "Iterations for f: " ++ show (fst resultF)
+    print (snd resultF)
+    putStrLn "-----------------------"
+
+    let
 
 result1 :: D
 result1 = evalExp exp1 funPhi []
@@ -74,44 +106,6 @@ result6 = evalAExp exp4 funAPhi [("x", Zero), ("y", One)]
 
 result7 :: ATwo
 result7 = evalAExp exp4 funAPhi [("x", One), ("y", One)]
-
-main :: IO ()
-main = do
-    let tableG = HashMap.fromList [([0, 0], 0), ([1, 0], 0), ([0, 1], 0), ([1, 1], 0)]
-        resultG = fixedpointIteration g' tableG 0
-    putStrLn $ "Iterations for g: " ++ show (fst resultG)
-    print (snd resultG)
-
-    putStrLn $ "evalFPI: " ++ show (evalWithFPI g' [1, 1] [0, 1] 0)
-    putStrLn $ "evalFPI: " ++ show (evalWithFPI ga [Zero, One] [Zero, One] Zero)
-
-    -- let aresult' = case (lookup "g" funPhi) of
-    --                    Nothing -> Nothing
-    --                    Just z  -> z [Just 1, Just 1]
-    -- putStrLn $ "aaaaaaaaTTTTTTTT: " ++ show aresult'
-
-    let result' = case (lookup "g" funAPhi) of
-                        Nothing -> Zero
-                        Just z  -> z [Zero, One] empty
-                    where
-                        empty :: HashMap.HashMap [ATwo] ATwo
-                        empty = HashMap.empty
-    putStrLn $ "TTTTTTTT: " ++ show result'
-
-    let tableF =
-            HashMap.fromList
-            [ ([0, 0, 0], 0),
-            ([0, 0, 1], 0),
-            ([0, 1, 0], 0),
-            ([0, 1, 1], 0),
-            ([1, 0, 0], 0),
-            ([1, 0, 1], 0),
-            ([1, 1, 0], 0),
-            ([1, 1, 1], 0)
-            ]
-        resultF = fixedpointIteration f' tableF 0
-    putStrLn $ "Iterations for f: " ++ show (fst resultF)
-    print (snd resultF)
 
     putStrLn $ "Result1: " ++ show result1
     putStrLn $ "Result2: " ++ show result2
