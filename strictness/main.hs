@@ -16,16 +16,16 @@ f' (x:y:z:rest) table =
 
 -- Define the function expressions
 add :: Exp
-add = Add (Var "x") (Var "y")
+add = BasicFn "add" [Var "x", Var "y"]
 
 fac :: Exp
-fac = If (Eq (Var "n") (Const 0))
+fac = If (BasicFn "eq" [Var "n", Const 0])
          (Const 1)
-         (Mul (Var "n") (Call "fac" [(Sub (Var "n") (Const 1))]))
+         (BasicFn "mul" [Var "n", Call "fac" [BasicFn "sub" [Var "n", Const 1]]])
 g :: Exp
-g = If (Eq (Var "y") (Const 0))
+g = If (BasicFn "eq" [Var "y", Const 0])
        (Var "x")
-       (Call "g" [Add (Var "x") (Const 1), Sub (Var "y") (Const 1)])
+       (Call "g" [BasicFn "add" [Var "x", Const 1], BasicFn "sub" [Var "y", Const 1]])
 
 -- Define the function definitions
 funDefs :: [FunDef]
@@ -47,7 +47,7 @@ funAPhi = evalAProgram funDefs
 -- Define the expressions
 
 callAdd :: Exp
-callAdd = Add (Const 3) (Call "add" [Const 4, Const 5])
+callAdd = BasicFn "add" [Const 3, Call "add" [Const 4, Const 5]]
 
 callFacConst :: Exp
 callFacConst = Call "fac" [Const 5]
