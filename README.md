@@ -105,3 +105,43 @@ s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)
 Prove `\forall{exp}. \{E_{std}[[exp]]\} \subseteq \gamma(E_{ros}[[exp]])`.
 
 ### Example.2 Strictness Analysis
+
+We call a function `f` is $strict$ if it maps the bottom element (meaning $undefined$) `⊥` to the bottom element; `f(⊥) = ⊥`. Thus, the results of calling `f` by value and calling `f` by need are the same.
+
+#### A lazy functional language
+
+- Semantics domains
+
+```
+D = V_{⊥}         - values
+\Phi = (D^k -> D)^n  - function denotations
+```
+
+- Semantics functions
+
+```
+E[[exp]]  : \phi -> D^k -> D
+P[[prog]] : \phi
+```
+
+- Definition
+
+```
+E[[c_i]] \phi v                = const_i
+E[[x_i]] \phi v                = v_i
+E[[a_i(e_1, ..., e_k)]] \phi v = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
+E[[if e_1 then e_2 else e_3]] \phi v = cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v)
+E[[f_i(e_1, ..., e_k)]] \phi v = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
+
+P[[f_1(x_1, ..., x_k) = e_1
+        .
+        .
+   f_n(x_1, ..., x_k) = e_n]] = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
+```
+
+, where
+
+```
+strict f<v_1, ..., v_k> = if v_1 = ⊥ ∨ .... v_k = ⊥ then ⊥ else f(v_1, ..., v_k)
+```
+
