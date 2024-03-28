@@ -5,7 +5,7 @@ Implementation of Rosendahl, Mads. "Introduction to abstract interpretation." Co
 
 The core idea of abstract interpretation is constructing an "abstract interpretation" of a programming language in addition to its usual meaning. The abstract interpretation can be used to reason the behaviour of the program.
 
-In this article, we denote the standard interpretation (mapping from a program to a function) as $I_1$ and the abstract interpretation as $I_2$. We also denote the relation between $I_1$ and $I_2$ as $R$: $I_1[p] R I_2[p]$, where $p$ is the input program.
+In this article, we denote the standard interpretation (mapping from a program to a function) as `I_1` and the abstract interpretation as `I_2`. We also denote the relation between `I_1` and `I_2` as `R`: `I_1[p] R I_2[p]`, where `p` is the input program.
 
 ### Example.1 Rule-of-Sign
 
@@ -30,7 +30,7 @@ E_{std}[[exp_1 * exp_2]] = E_{std}[[exp_1]] * E_{std}[[exp_2]]
 
 #### Abstract Interpretation
 
-We introduce a set of abstract values, $Sign = \{zero, pos, neg, num\}$. The adition and multiplication on $Sign$ can be defined as the below tables.
+We introduce a set of abstract values, `Sign = {zero, pos, neg, num}`. The adition and multiplication on `Sign` can be defined as the below tables.
 
 ```
 ⊕ : Sign × Sign → Sign
@@ -62,11 +62,11 @@ E{ros}[[exp_1 + exp_2]] = E{ros}[[exp_1]] ⊕ E{ros}[[exp_2]]
 E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] 
 ```
 
-, where $sign(x)$ = if $x > 0$ then $pos$ else if $x < 0$ then $neg$ else $zero$.
+, where `sign(x) = if x > 0 then pos else if x < 0 then neg else zero`.
 
 #### Relation
 
-- an abstract value $\to$ a set of integers (concretisation)
+- an abstract value `\to` a set of integers (concretisation)
 
 ```
 \gamma : Sign \to P(\mathcal{Z}) \setminus \{\empty\} 
@@ -76,7 +76,7 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]]
 \gamma(num) = \mathcal{Z}
 ```
 
-- a set of integers $\to$ an abstract value (abstraction)
+- a set of integers `\to` an abstract value (abstraction)
 
 ```
 \alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign 
@@ -86,7 +86,7 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]]
           = num  otherwise
 ```
 
-The relationship  between $\gamma$ and $\alpha$ is as follows.
+The relationship  between `\gamma` and `\alpha` is as follows.
 
 ```
 \forall{s} \in Sign.  \alpha(\gamma(s)) = s 
@@ -102,6 +102,6 @@ s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)
 
 - Excercise
 
-Prove $\forall{exp}. \{E_{std}[[exp]]\} \subseteq \gamma(E_{ros}[[exp]])$.
+Prove `\forall{exp}. \{E_{std}[[exp]]\} \subseteq \gamma(E_{ros}[[exp]])`.
 
 ### Example.2 Strictness Analysis
