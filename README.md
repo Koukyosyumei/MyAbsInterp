@@ -127,16 +127,16 @@ P[[prog]] : \phi
 - Definition
 
 ```
-E[[c_i]] \phi v                = const_i
-E[[x_i]] \phi v                = v_i
-E[[a_i(e_1, ..., e_k)]] \phi v = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
+E[[c_i]] \phi v                      = const_i
+E[[x_i]] \phi v                      = v_i
+E[[a_i(e_1, ..., e_k)]] \phi v       = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
 E[[if e_1 then e_2 else e_3]] \phi v = cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v)
-E[[f_i(e_1, ..., e_k)]] \phi v = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
+E[[f_i(e_1, ..., e_k)]] \phi v       = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
 
 P[[f_1(x_1, ..., x_k) = e_1
         .
         .
-   f_n(x_1, ..., x_k) = e_n]] = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
+   f_n(x_1, ..., x_k) = e_n]]        = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
 ```
 
 , where
