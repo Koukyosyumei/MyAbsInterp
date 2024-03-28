@@ -22,9 +22,9 @@ exp ::= n           - number
 #### Standard Interpretation
 
 ```
-E_{std}[[exp]] : \mathcal{Z} \\
-E_{std}[[n_i]] = n_i \\
-E_{std}[[exp_1 + exp_2]] = E_{std}[[exp_1]] + E_{std}[[exp_2]] \\
+E_{std}[[exp]] : \mathcal{Z} 
+E_{std}[[n_i]] = n_i 
+E_{std}[[exp_1 + exp_2]] = E_{std}[[exp_1]] + E_{std}[[exp_2]] 
 E_{std}[[exp_1 * exp_2]] = E_{std}[[exp_1]] * E_{std}[[exp_2]]
 ```
 
@@ -56,10 +56,10 @@ Then, we define the abstract interpretation with the above operators.
 
 
 ```
-E{ros}[[exp]] : Sign \\
-E{ros}[[ni]] = sign(ni) \\
-E{ros}[[exp_1 + exp_2]] = E{ros}[[exp_1]] ⊕ E{ros}[[exp_2]] \\
-E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \\
+E{ros}[[exp]] : Sign 
+E{ros}[[ni]] = sign(ni) 
+E{ros}[[exp_1 + exp_2]] = E{ros}[[exp_1]] ⊕ E{ros}[[exp_2]] 
+E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] 
 ```
 
 , where $sign(x)$ = if $x > 0$ then $pos$ else if $x < 0$ then $neg$ else $zero$.
@@ -69,35 +69,35 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \\
 - an abstract value $\to$ a set of integers (concretisation)
 
 ```
-\gamma : Sign \to P(\mathcal{Z}) \setminus \{\empty\} \\
-\gamma(zero) = \{0\} \\
-\gamma(pos) = \{x | x > 0\} \\
-\gamma(neg) = \{x | x < 0\} \\
+\gamma : Sign \to P(\mathcal{Z}) \setminus \{\empty\} 
+\gamma(zero) = \{0\} 
+\gamma(pos) = \{x | x > 0\} 
+\gamma(neg) = \{x | x < 0\} 
 \gamma(num) = \mathcal{Z}
 ```
 
 - a set of integers $\to$ an abstract value (abstraction)
 
 ```
-\alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign \\
-\alpha(X) = zero if  (X = \{0\}) \\
-          = pos  if  (\forall{x \in X}. x > 0) \\
-          = neg  if  (\forall{x \in X}. x < 0) \\
+\alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign 
+\alpha(X) = zero if  (X = \{0\}) 
+          = pos  if  (\forall{x \in X}. x > 0) 
+          = neg  if  (\forall{x \in X}. x < 0) 
           = num  otherwise
 ```
 
 The relationship  between $\gamma$ and $\alpha$ is as follows.
 
 ```
-\forall{s} \in Sign.  \alpha(\gamma(s)) = s \\
+\forall{s} \in Sign.  \alpha(\gamma(s)) = s 
 \forall{X} \in P(\mathcal{Z}) \setminus \empty.  \gamma(\alpha(X)) \supseteq X
 ```
 
 Then, the additino and multiplication can be written as follows.
 
 ```
-s_1 ⊕ s_2 = \alpha(\{x_1 + x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) \\
-s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) \\
+s_1 ⊕ s_2 = \alpha(\{x_1 + x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) 
+s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) 
 ```
 
 - Excercise
