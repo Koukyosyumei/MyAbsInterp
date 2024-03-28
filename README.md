@@ -80,10 +80,10 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \\
 
 ```
 \alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign \\
-\alpha(X) = zero \hbox{if}  (X = \{0\}) \\
-          = pos  \hbox{if}  (\forall{x \in X}. x > 0) \\
-          = neg  \hbox{if}  (\forall{x \in X}. x < 0) \\
-          = num  \hbox{otherwise}
+\alpha(X) = zero if  (X = \{0\}) \\
+          = pos  if  (\forall{x \in X}. x > 0) \\
+          = neg  if  (\forall{x \in X}. x < 0) \\
+          = num  otherwise
 ```
 
 The relationship  between $\gamma$ and $\alpha$ is as follows.
