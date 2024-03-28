@@ -80,17 +80,17 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \\
 
 ```
 \alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign \\
-\alpha(X) = zero \quad \hbox{if} \quad (X = \{0\}) \\
-\quad \quad \quad \quad  = pos \quad \hbox{if} \quad (\forall{x \in X}. x > 0) \\
-\quad \quad \quad \quad  = neg \quad \hbox{if} \quad (\forall{x \in X}. x < 0) \\
-          = num \quad \hbox{otherwise}
+\alpha(X) = zero \hbox{if}  (X = \{0\}) \\
+          = pos  \hbox{if}  (\forall{x \in X}. x > 0) \\
+          = neg  \hbox{if}  (\forall{x \in X}. x < 0) \\
+          = num  \hbox{otherwise}
 ```
 
 The relationship  between $\gamma$ and $\alpha$ is as follows.
 
 ```
-\forall{s} \in Sign. \quad \alpha(\gamma(s)) = s \\
-\forall{X} \in P(\mathcal{Z}) \setminus \empty. \quad \gamma(\alpha(X)) \supseteq X
+\forall{s} \in Sign.  \alpha(\gamma(s)) = s \\
+\forall{X} \in P(\mathcal{Z}) \setminus \empty.  \gamma(\alpha(X)) \supseteq X
 ```
 
 Then, the additino and multiplication can be written as follows.
