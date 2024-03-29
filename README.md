@@ -266,6 +266,20 @@ Recall the following!
 
 The proof consists of a local part for structual induction and a global part for fixpoint induction.
 
+```
+# Definitino of admissible subset
+
+We call A, the subset of w-chain set X, an admissible subset when it satisfies the following conditions.
+
+- The mimimum element ⊥ is an element within A
+
+- For arbitrary chain x_1 <= x_2 <= ..., and for any n \in \mathcal{N}, x_n \in A implies that x_n' \in A for all n' >= 1.
+
+# Definition of fixpoint induction
+
+
+```
+
 ##### Proof
 
 We first define a relation between real functions and strictness functions. 
@@ -276,6 +290,8 @@ f^♯: \mathcal{2}^k -> \mathcal{2}
 
 f R f^♯ <=> ∀ρ ∈ D^k, ρ^♯ ∈ \mathcal{2}^k. α(ρ_1) <= ρ_1^♯ ∧ · · · ∧ α(ρk) <= ρ_k^♯ ⇒ α(f(ρ)) <= f^♯(ρ^♯)
 ```
+
+(Again, we want `f^♯(ρ^♯)` since we can say that `f` is strict for the j-th argument if `f^♯(ρ^♯) = 0` with `p_j^♯ = 0`).
 
 Then, we prove `P[[p]] ↓ i R P^♯[[p]] ↓ i` for `i = 1, ..., n` and all programs `p`.
 
