@@ -256,3 +256,34 @@ We need to prove that the semantics function `P^#` meets the following:
 ```
 ∀ρ, i : α((P[[p]] ↓ i)ρ) v (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
 ```
+
+The proof consists of a local part for structual induction and a global part for fixpoint induction.
+
+##### Proof
+
+We first define a relation between real functions and strictness functions. 
+
+```
+f  : D^k -> D
+f^♯: \mathcal{2}^k -> \mathcal{2}
+
+f R f^♯ <=> ∀ρ ∈ D^k, ρ^♯ ∈ \mathcal{2}^k. α(ρ_1) <= ρ_1^♯ ∧ · · · ∧ α(ρk) <= ρ_k^♯ ⇒ α(f(ρ)) <= f^♯(ρ^♯)
+```
+
+Then, we prove `P[[p]] ↓ i R P^♯[[p]] ↓ i` for `i = 1, ..., n` and all programs `p`.
+
+- Local part
+
+In the local part, we will prove the following for all expression `e`:
+
+```
+∀φ ∈ (D_k → D)^n, φ^♯ ∈ (\mathcal{2}^k → \mathcal{2})^n. φ_1 R φ_1^♯ ∧ · · · ∧ φ_n R φ_n^♯ ⇒ E[[e]]φ R E^♯[[e]]φ^♯
+```
+
+We show the above by the structual induction over all possible expressions.
+
+1) For constant `c_i`, it is obviously that
+
+```
+∀ρ ∈ D^k, ρ^♯ ∈ \mathcak{2}^k. α(ρ_1) <= ρ_1^♯ ∧ · · · ∧ α(ρ_k) <= ρ_k^♯ ⇒ α(c_i) <= 1
+```
