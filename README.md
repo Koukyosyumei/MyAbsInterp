@@ -165,5 +165,45 @@ Then, we use `\mathcal{2}` to describe if an element in `D` is defined or not, m
 α(d) = if d = ⊥ then 0 else 1
 ```
 
+It is obvious that `α` holds `∀d ∈ D. d = ⊥ ⇔ α(d) = 0`.
+
+#### Strictness function
+
+We assume that we want to investigate the strictness of a function `f : D^k -> D`.
+
+Let `f' \mathcal{2}^k -> 2` satisifies the following.
+
+```
+∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) = f'(α(d_1), . . . , α(d_k))
+```
+
+If `f'` exists, we can check the strictness of `f` by checking all combinations of inputs.
+
+For example, if `f'(1, ..., 1, 0, 1, ..., 1) = 0` (only the j-th position is 0), we can say that `f` is strict in its `j`-th argument.
+
+- Undecidable
+
+However, we cannot always construct such functions. One example is `g(x, y) = if x = 0 then y else 0`.
+
+```
+g(0, ⊥) = ⊥
+g(1, ⊥) = 0
+
+α(g(0, ⊥)) = 0 = g'(1, 0)
+α(g(1, ⊥)) = 1 = g'(1, 0)
+```
+
+The above means that strictness property is $undeciable$.
+
+#### Approximations
+
+As an alternative approach, we can define two functions; upper bound of lower bound of `\alpha(f(d_1, ..., d_k))`.
+
+```
+∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) <= f^♯(α(d_1), . . . , α(d_k))
+
+∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) >= f^♭(α(d_1), . . . , α(d_k))
+```
+
 
 
