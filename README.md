@@ -329,8 +329,22 @@ In the local part, we will prove the following for all expression `e`:
 
 We show the above by the structual induction over all possible expressions.
 
-1) For constant `c_i`, it is obviously that
+1) For constant `c_i`, it is obvious that
 
 ```
 ∀ρ ∈ D^k, ρ^♯ ∈ \mathcak{2}^k. α(ρ_1) ⊑ ρ_1^♯ ∧ · · · ∧ α(ρ_k) ⊑ ρ_k^♯ ⇒ α(c_i) ⊑ 1
+```
+
+2) For parameters x_i, it is also obivous that
+
+```
+∀ρ ∈ D^k, ρ^♯ ∈ \mathcak{2}^k. α(ρ_1) ⊑ ρ_1^♯ ∧ · · · ∧ α(ρ_k) ⊑ ρ_k^♯ ⇒ α(c_i) ⊑ ρ_i^♯
+```
+
+3) For standard operations `a_i(e_1, ..., e_k)`, we have to prove that 
+
+```
+α(strict basic_i(v_1, ..., v_k)) ⊑ v_1^♯ ∧ ... ∧ v_k^♯
+
+(v_j = E[[e_j]]φv, v_j^♯ = E^♯[[e_j]]φ^♯v^♯)
 ```
