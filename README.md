@@ -145,11 +145,11 @@ P[[f_1(x_1, ..., x_k) = e_1
 strict f<v_1, ..., v_k> = if v_1 = ⊥ ∨ .... v_k = ⊥ then ⊥ else f(v_1, ..., v_k)
 ```
 
-Each definition corresponds to the mapping of `name of the i-th constant -> value of the i-th constant`, `name of the i-th variable -> value of the i-th variable`, `name of the i-th basic function -> strictly evaluated value of that function on v`, `control flow`, and `name of the i-th user-defined function -> evaluated value of that function on v`, respectively.
+Each definition corresponds to the mapping of `name of the i-th constant -> value of the i-th constant`, `name of the i-th variable -> value of the i-th variable`, `name of the i-th standard operation -> strictly evaluated value of that operation on v`, `control flow`, and `name of the i-th user-defined function -> evaluated value of that function on v`, respectively.
 
 #### Abstract domain
 
-To examine the strictness of a function, we use a two-point domain named `\mathcal{2} = {0, 1}` ordered by `0 <= 1`.
+To examine the strictness of a function, we use a two-point domain named `\mathcal{2} = {0, 1}` ordered by `0 ⊑ 1`.
 
 Here, we define two utility operators.
 
@@ -200,7 +200,7 @@ The above means that strictness property is $undeciable$.
 As an alternative approach, we can define two functions; upper bound of lower bound of `\alpha(f(d_1, ..., d_k))`.
 
 ```
-∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) <= f^♯(α(d_1), . . . , α(d_k))
+∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) ⊑ f^♯(α(d_1), . . . , α(d_k))
 
 ∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) >= f^♭(α(d_1), . . . , α(d_k))
 ```
@@ -254,7 +254,7 @@ P^#[[f_1(x_1, ..., x_k) = e_1
 We need to prove that the semantics function `P^#` meets the following:
 
 ```
-∀ρ, i : α((P[[p]] ↓ i)ρ) <= (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
+∀ρ, i : α((P[[p]] ↓ i)ρ) ⊑ (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
 ```
 
 Recall the following!
@@ -266,19 +266,7 @@ Recall the following!
 
 The proof consists of a local part for structual induction and a global part for fixpoint induction.
 
-```
-# Definitino of admissible subset
-
-We call A, the subset of w-chain set X, an admissible subset when it satisfies the following conditions.
-
-- The mimimum element ⊥ is an element within A
-
-- For arbitrary chain x_1 <= x_2 <= ..., and for any n \in \mathcal{N}, x_n \in A implies that x_n' \in A for all n' >= 1.
-
-# Definition of fixpoint induction
-
-
-```
+⨆ ⊑
 
 ##### Proof
 
@@ -288,7 +276,7 @@ We first define a relation between real functions and strictness functions.
 f  : D^k -> D
 f^♯: \mathcal{2}^k -> \mathcal{2}
 
-f R f^♯ <=> ∀ρ ∈ D^k, ρ^♯ ∈ \mathcal{2}^k. α(ρ_1) <= ρ_1^♯ ∧ · · · ∧ α(ρk) <= ρ_k^♯ ⇒ α(f(ρ)) <= f^♯(ρ^♯)
+f R f^♯ <=> ∀ρ ∈ D^k, ρ^♯ ∈ \mathcal{2}^k. α(ρ_1) ⊑ ρ_1^♯ ∧ · · · ∧ α(ρk) ⊑ ρ_k^♯ ⇒ α(f(ρ)) ⊑ f^♯(ρ^♯)
 ```
 
 (Again, we want `f^♯(ρ^♯)` since we can say that `f` is strict for the j-th argument if `f^♯(ρ^♯) = 0` with `p_j^♯ = 0`).
@@ -308,5 +296,5 @@ We show the above by the structual induction over all possible expressions.
 1) For constant `c_i`, it is obviously that
 
 ```
-∀ρ ∈ D^k, ρ^♯ ∈ \mathcak{2}^k. α(ρ_1) <= ρ_1^♯ ∧ · · · ∧ α(ρ_k) <= ρ_k^♯ ⇒ α(c_i) <= 1
+∀ρ ∈ D^k, ρ^♯ ∈ \mathcak{2}^k. α(ρ_1) ⊑ ρ_1^♯ ∧ · · · ∧ α(ρ_k) ⊑ ρ_k^♯ ⇒ α(c_i) ⊑ 1
 ```
