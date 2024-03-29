@@ -127,11 +127,11 @@ P[[prog]] : φ
 - Definition
 
 ```
-E[[c_i]] φ v                      = const_i
-E[[x_i]] φ v                      = v_i
+E[[c_i]] φ v                      = const_i                                         
+E[[x_i]] φ v                      = v_i                                             
 E[[a_i(e_1, ..., e_k)]] φ v       = strict basic_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>
 E[[if e_1 then e_2 else e_3]] φ v = cond(E[[e_1]] φ v, E[[e_2]] φ v, E[[e_3]] φ v)
-E[[f_i(e_1, ..., e_k)]] φ v       = f_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>
+E[[f_i(e_1, ..., e_k)]] φ v       = f_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>            
 
 P[[f_1(x_1, ..., x_k) = e_1
         .
@@ -144,4 +144,26 @@ P[[f_1(x_1, ..., x_k) = e_1
 ```
 strict f<v_1, ..., v_k> = if v_1 = ⊥ ∨ .... v_k = ⊥ then ⊥ else f(v_1, ..., v_k)
 ```
+
+Each definition corresponds to the mapping of `name of the i-th constant -> value of the i-th constant`, `name of the i-th variable -> value of the i-th variable`, `name of the i-th basic function -> strictly evaluated value of that function on v`, `control flow`, and `name of the i-th user-defined function -> evaluated value of that function on v`, respectively.
+
+#### Abstract domain
+
+To examine the strictness of a function, we use a two-point domain named `\mathcal{2} = {0, 1}` ordered by `0 <= 1`.
+
+Here, we define two utility operators.
+
+```
+d_1 ∧ d_2 = min(d_1, d_2)
+d_2 ∨ d_2 = max(d_1, d_2)
+```
+
+Then, we use `\mathcal{2}` to describe if an element in `D` is defined or not, meaning that it is `⊥` or not. Specifically, we define the abstract function as follows:
+
+```
+α : D → \mathcal{2}
+α(d) = if d = ⊥ then 0 else 1
+```
+
+
 
