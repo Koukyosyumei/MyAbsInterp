@@ -69,40 +69,40 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]]
 - an abstract value `\to` a set of integers (concretisation)
 
 ```
-\gamma : Sign \to P(\mathcal{Z}) \setminus \{\empty\} 
-\gamma(zero) = \{0\} 
-\gamma(pos) = \{x | x > 0\} 
-\gamma(neg) = \{x | x < 0\} 
-\gamma(num) = \mathcal{Z}
+γ : Sign \to P(\mathcal{Z}) \setminus \{\empty\} 
+γ(zero) = \{0\} 
+γ(pos) = \{x | x > 0\} 
+γ(neg) = \{x | x < 0\} 
+γ(num) = \mathcal{Z}
 ```
 
 - a set of integers `\to` an abstract value (abstraction)
 
 ```
-\alpha : P(\mathcal{Z}) \setminus \{\empty\} \to Sign 
-\alpha(X) = zero if  (X = \{0\}) 
-          = pos  if  (\forall{x \in X}. x > 0) 
-          = neg  if  (\forall{x \in X}. x < 0) 
-          = num  otherwise
+α : P(\mathcal{Z}) \setminus \{\empty\} \to Sign 
+α(X) = zero if  (X = \{0\}) 
+     = pos  if  (∀{x ∈ X}. x > 0) 
+     = neg  if  (∀{x ∈ X}. x < 0) 
+     = num  otherwise
 ```
 
-The relationship  between `\gamma` and `\alpha` is as follows.
+The relationship  between `γ` and `α` is as follows.
 
 ```
-\forall{s} \in Sign.  \alpha(\gamma(s)) = s 
-\forall{X} \in P(\mathcal{Z}) \setminus \empty.  \gamma(\alpha(X)) \supseteq X
+∀{s} ∈ Sign.  α(γ(s)) = s 
+∀{X} ∈ P(\mathcal{Z}) \setminus \empty.  γ(α(X)) \supseteq X
 ```
 
 Then, the additino and multiplication can be written as follows.
 
 ```
-s_1 ⊕ s_2 = \alpha(\{x_1 + x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) 
-s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 ∈ \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) 
+s_1 ⊕ s_2 = α(\{x_1 + x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)\}) 
+s_1 ⊗ s_2 = α(\{x_1 ∗ x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)\}) 
 ```
 
 - Excercise
 
-Prove `\forall{exp}. \{E_{std}[[exp]]\} \subseteq \gamma(E_{ros}[[exp]])`.
+Prove `∀{exp}. \{E_{std}[[exp]]\} \subseteq γ(E_{ros}[[exp]])`.
 
 ### Example.2 Strictness Analysis
 
@@ -114,29 +114,29 @@ We call a function `f` is $strict$ if it maps the bottom element (meaning $undef
 
 ```
 D = V_{⊥}         - values
-\Phi = (D^k -> D)^n  - function denotations
+φ = (D^k -> D)^n  - function denotations
 ```
 
 - Semantics functions
 
 ```
-E[[exp]]  : \phi -> D^k -> D
-P[[prog]] : \phi
+E[[exp]]  : φ -> D^k -> D
+P[[prog]] : φ
 ```
 
 - Definition
 
 ```
-E[[c_i]] \phi v                      = const_i
-E[[x_i]] \phi v                      = v_i
-E[[a_i(e_1, ..., e_k)]] \phi v       = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
-E[[if e_1 then e_2 else e_3]] \phi v = cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v)
-E[[f_i(e_1, ..., e_k)]] \phi v       = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v>
+E[[c_i]] φ v                      = const_i
+E[[x_i]] φ v                      = v_i
+E[[a_i(e_1, ..., e_k)]] φ v       = strict basic_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>
+E[[if e_1 then e_2 else e_3]] φ v = cond(E[[e_1]] φ v, E[[e_2]] φ v, E[[e_3]] φ v)
+E[[f_i(e_1, ..., e_k)]] φ v       = f_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>
 
 P[[f_1(x_1, ..., x_k) = e_1
         .
         .
-   f_n(x_1, ..., x_k) = e_n]]        = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
+   f_n(x_1, ..., x_k) = e_n]]        = fix \lambda φ. <E[[e_1]] φ, ..., E[[e_2]] φ>
 ```
 
 , where
