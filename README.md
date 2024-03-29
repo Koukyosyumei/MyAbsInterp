@@ -127,11 +127,11 @@ P[[prog]] : φ
 - Definition
 
 ```
-E[[c_i]] φ v                      = const_i                                         
-E[[x_i]] φ v                      = v_i                                             
-E[[a_i(e_1, ..., e_k)]] φ v       = strict basic_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>
-E[[if e_1 then e_2 else e_3]] φ v = cond(E[[e_1]] φ v, E[[e_2]] φ v, E[[e_3]] φ v)
-E[[f_i(e_1, ..., e_k)]] φ v       = f_i<E[[e_1]] φ v, ..., E[[e_k]] φ v>            
+E[[c_i]]φv                      = const_i                                         
+E[[x_i]]φv                      = v_i                                             
+E[[a_i(e_1, ..., e_k)]]φv       = strict basic_i<E[[e_1]]φv, ..., E[[e_k]]φv>
+E[[if e_1 then e_2 else e_3]]φv = cond(E[[e_1]]φv, E[[e_2]]φv, E[[e_3]]φv)
+E[[f_i(e_1, ..., e_k)]]φv       = f_i<E[[e_1]]φv, ..., E[[e_k]]φv>            
 
 P[[f_1(x_1, ..., x_k) = e_1
         .
@@ -224,3 +224,35 @@ cond^♯(b, x, y) = b ∧ (x ∨ y)
 
 This means that when the condition is defined, at least one of the branch should be defined to satisfy that the entire expression is defined.
 
+#### Strictness interpretation
+
+- Sematic functions
+
+```
+E^♯[[exp]] : (\mathcal{2}^k -> \mathcal{2})^n -> \mathcal{2}^k -> \mathcal{2}
+P^♯[[exp]] : (\mathcal{2}^k -> \mathcal{2})^n
+```
+
+- Definition
+
+```
+E^♯[[c_i]]φv                      = 1
+E^♯[[x_i]]φv                      = v_i
+E^♯[[a_i(e_1, ..., e_k)]]φv       = E^♯[[e_1]]φv ∧ · · · ∧ E^♯[[e_k]]φv 
+E^♯[[if e_1 then e_2 else e_3]]φv = E^♯[[e_1]]φv ∧ (E^♯[[e_2]]φv ∨ E^♯[[e_3]]φv)
+E^♯[[f_i(e_1, ..., e_k)]]φv       = φ_i<E^♯[[e_1]]φv, ..., E^♯[[e_k]]φv> 
+
+P^#[[f_1(x_1, ..., x_k) = e_1
+               .
+               .
+               .
+     f_n(x_1, ..., x_k) = e_n]]   = fix \lambda φ. <E^♯[[e_1]]φ, ..., E^♯[[e_k]]φ>
+```
+
+#### Correctness
+
+We need to prove that the semantics function `P^#` meets the following:
+
+```
+∀ρ, i : α((P[[p]] ↓ i)ρ) v (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
+```
