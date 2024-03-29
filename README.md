@@ -254,7 +254,14 @@ P^#[[f_1(x_1, ..., x_k) = e_1
 We need to prove that the semantics function `P^#` meets the following:
 
 ```
-∀ρ, i : α((P[[p]] ↓ i)ρ) v (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
+∀ρ, i : α((P[[p]] ↓ i)ρ) <= (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
+```
+
+Recall the following!
+
+```
+α : D → \mathcal{2}
+α(d) = if d = ⊥ then 0 else 1
 ```
 
 The proof consists of a local part for structual induction and a global part for fixpoint induction.
