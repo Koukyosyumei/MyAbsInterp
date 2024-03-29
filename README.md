@@ -257,16 +257,52 @@ We need to prove that the semantics function `P^#` meets the following:
 ∀ρ, i : α((P[[p]] ↓ i)ρ) ⊑ (P^#[[p]] ↓ i)<α(ρ_1), . . . , α(ρ_k)>
 ```
 
-Recall the following!
+Recall the followings!
 
 ```
 α : D → \mathcal{2}
 α(d) = if d = ⊥ then 0 else 1
 ```
 
-The proof consists of a local part for structual induction and a global part for fixpoint induction.
+```
+Def: cpo
 
-⨆ ⊑
+A partial order <D, ⊑> is said to be a cpo if any w-chain of D, d_0 ⊑ d_1 ⊑ ... ⊑ d_n ⊑ ..., satisfies that its lower upperbound, ⨆_{n \in w} d_n is within D
+```
+
+```
+Def: monotonic
+
+Let D and E be cpo. Then, f: D -> E is said to be monotonic if it satisfies ∀d, d' \in D. d ⊑ d' => f(d) ⊑ f(d')
+```
+
+```
+Def: continuous
+
+A monotonic function is said to be continuous, if it satisfies ⨆_{n \in w} f(d_n) = f(⨆_{n \in w} d_n) for all w-chain in D.
+```
+
+```
+Def: fixedpoint
+
+Let f: D -> D be a continuous function on cpo D that has a least element.
+
+fix(f) = ⨆_{n \in w} f^{n}(⊥)
+```
+
+```
+Def: inclusive
+
+Let D be cpo. Then, we say that the subset P \subseteq D is inclusive, if for any w-chain in D, d_0 ⊑ d_1 ⊑ ... ⊑ d_n ⊑ ..., we have (d_n \in P for any n \in w) => (⨆_{n \in w} d_n \in P).
+```
+
+```
+Def: fixpoint induction
+
+Let D be a cpo with the least element of ⊥, f: D -> D be a continuous, and P be an inclusive subset of D. Then, if ⊥ \in P and ∀x \in D.x \in P => F(x) \in P, we have that fix(F) \in P.
+```
+
+The proof consists of a local part for structual induction and a global part for fixpoint induction.
 
 ##### Proof
 
