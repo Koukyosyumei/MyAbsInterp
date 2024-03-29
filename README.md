@@ -66,21 +66,21 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]]
 
 #### Relation
 
-- an abstract value `\to` a set of integers (concretisation)
+- an abstract value -> a set of integers (concretisation)
 
 ```
-γ : Sign \to P(\mathcal{Z}) \setminus \{\empty\} 
-γ(zero) = \{0\} 
-γ(pos) = \{x | x > 0\} 
-γ(neg) = \{x | x < 0\} 
+γ : Sign -> P(\mathcal{Z}) \setminus {∅} 
+γ(zero) = {0} 
+γ(pos) = {x | x > 0} 
+γ(neg) = {x | x < 0} 
 γ(num) = \mathcal{Z}
 ```
 
-- a set of integers `\to` an abstract value (abstraction)
+- a set of integers -> an abstract value (abstraction)
 
 ```
-α : P(\mathcal{Z}) \setminus \{\empty\} \to Sign 
-α(X) = zero if  (X = \{0\}) 
+α : P(\mathcal{Z}) \setminus {∅} -> Sign 
+α(X) = zero if  (X = {0}) 
      = pos  if  (∀{x ∈ X}. x > 0) 
      = neg  if  (∀{x ∈ X}. x < 0) 
      = num  otherwise
@@ -90,19 +90,19 @@ The relationship  between `γ` and `α` is as follows.
 
 ```
 ∀{s} ∈ Sign.  α(γ(s)) = s 
-∀{X} ∈ P(\mathcal{Z}) \setminus \empty.  γ(α(X)) \supseteq X
+∀{X} ∈ P(\mathcal{Z}) \setminus ∅.  γ(α(X)) \supseteq X
 ```
 
 Then, the additino and multiplication can be written as follows.
 
 ```
-s_1 ⊕ s_2 = α(\{x_1 + x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)\}) 
-s_1 ⊗ s_2 = α(\{x_1 ∗ x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)\}) 
+s_1 ⊕ s_2 = α({x_1 + x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)}) 
+s_1 ⊗ s_2 = α({x_1 ∗ x_2 | x_1 ∈ γ(s_1) ∧ x_2 ∈ γ(s_2)}) 
 ```
 
 - Excercise
 
-Prove `∀{exp}. \{E_{std}[[exp]]\} \subseteq γ(E_{ros}[[exp]])`.
+Prove `∀{exp}. {E_{std}[[exp]]} \subseteq γ(E_{ros}[[exp]])`.
 
 ### Example.2 Strictness Analysis
 
