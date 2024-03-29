@@ -205,5 +205,22 @@ As an alternative approach, we can define two functions; upper bound of lower bo
 ∀<d_1, . . . , d_k> ∈ D^k. α(f(d_1, . . . , d_k)) >= f^♭(α(d_1), . . . , α(d_k))
 ```
 
+For example, if we know that `f^♯(1, ..., 1, 0, 1, ..., 1) = 0` for the above example, we can conclude that this function is strict for the j-th argument.
 
+As a concrete example of `f^♯`, we can construct `mul^♯` for the lifted multplication as follows.
+
+```
+mul_⊥ : N_⊥ × N_⊥ → N_⊥
+mul_⊥(x, y) = if x = ⊥ ∨ y = ⊥ then ⊥ else x ∗ y
+
+mul^♯(x, y) = x ∧ y = min(x, y)
+```
+
+Another example is if-else condition.
+
+```
+cond^♯(b, x, y) = b ∧ (x ∨ y)
+```
+
+This means that when the condition is defined, at least one of the branch should be defined to satisfy that the entire expression is defined.
 
