@@ -1,4 +1,5 @@
-# MyAbsInterp
+# MyAbstractor
+
 Implementation of Rosendahl, Mads. "Introduction to abstract interpretation." Computer Science University of Copenhagen (1995).
 
 ## Overview of Abstract Interpretation
