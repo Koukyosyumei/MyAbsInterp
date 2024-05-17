@@ -50,4 +50,4 @@ allCombinations n xs = allCombinations' (replicate n xs)
 -- | Helper function for generating all combinations.
 allCombinations' :: [[a]] -> [[a]]
 allCombinations' [] = [[]]
-allCombinations' (xs:xss) = [x:ys | x <- xs, ys <- allCombinations' xss]        
+allCombinations' (xs:xss) = [x:ys | x <- xs, ys <- allCombinations' xss]   

@@ -1,10 +1,8 @@
-module BaseLang where
+module Constantpropagation where
 
--- | Type synonym for representing values.
-type V = Int
+----------- Definition of Base Lang ---------------------
 
--- | Type synonym for representing computations that may fail.
-type D = Maybe Int
+data D = Bottom | Top | B Bool | N Int deriving(Show, Eq)
 
 -- | Type alias for environment bindings.
 type Env = [(String, D)]
@@ -13,9 +11,8 @@ type Env = [(String, D)]
 type Phi = [(String, [D] -> D)]
 
 -- | Represents expressions in the language.
-data Exp = Const Int
+data Exp = Const D
     | Var String
-    | If Exp Exp Exp
     | BasicFn String [Exp]
     | Call String [Exp]
     | MemoCall String [Exp]
@@ -23,16 +20,6 @@ data Exp = Const Int
 
 -- | Represents function definitions.
 data FunDef = FunDef String [String] Exp deriving(Show)
-
--- | Signature mappings for basic functions
-basicPhi :: Phi
-basicPhi = [
-            ("add", \(x:y:rest) -> (+) <$> x <*> y),
-            ("sub", \(x:y:rest) -> (-) <$> x <*> y),
-            ("mul", \(x:y:rest) -> (*) <$> x <*> y),
-            ("eq", \((Just x):(Just y):rest) -> if x == y then Just 1 else Just 0),
-            ("geq", \((Just x):(Just y):rest) -> if x >= y then Just 1 else Just 0)
-           ]
 
 -- | Evaluates a program represented by a list of function definitions.
 evalProgram :: [FunDef]    -- ^ List of function definitions.
@@ -58,38 +45,59 @@ updateFunDefs (FunDef s args exp) phi =
     let innerphi = [(s, \params -> evalExp exp (updateFunDefs (FunDef s args exp) phi) (zip args params))]
     in innerphi ++ phi
 
+addD :: [D] -> D
+addD ((N x):(N y):_) = N (x + y)
+addD (Bottom:_:_) = Bottom
+addD (_:Bottom:_) = Bottom
+
+subD :: [D] -> D
+subD ((N x):(N y):_) = N (x - y)
+subD (Bottom:_:_) = Bottom
+subD (_:Bottom:_) = Bottom
+
+mulD :: [D] -> D 
+mulD ((N x):(N y):_) = N (x * y)
+mulD (Bottom:_:_) = Bottom
+mulD (_:Bottom:_) = Bottom
+
+eqD :: [D] -> D
+eqD ((N x):(N y):_) = B (x == y)
+eqD ((B x):(B y):_) = B (x == y)
+eqD (Bottom:_:_) = Bottom
+eqD (_:Bottom:_) = Bottom
+
+-- | Signature mappings for basic functions
+basicPhi :: Phi
+basicPhi = [("add", addD), ("sub", subD), ("mul", mulD), ("eq", eqD)]
+
 -- | Evaluates an expression in the given environment.
 evalExp :: Exp   -- ^ Expression to be evaluated.
         -> Phi   -- ^ Function signature mappings.
         -> Env   -- ^ Environment containing variable bindings.
         -> D     -- ^ Result of the evaluation.
-evalExp (Const x) _ _ = Just x
+evalExp (Const x) _ _ = x
 evalExp (Var key) _ env =
     case lookup key env of
-        Nothing     -> Nothing
+        Nothing     -> Bottom
         Just result -> result
-evalExp (If cond thenBranch elseBranch) phi env =
-    case evalExp cond phi env of
-        Nothing -> Nothing
-        Just x  -> evalExp (if x == 0 then elseBranch else thenBranch) phi env
 evalExp (BasicFn fname args) phi env = 
     case (lookup fname basicPhi) of
-        Nothing -> Nothing
-        Just f -> strict f (map (\a -> evalExp a phi env) args)
+        Nothing -> Bottom
+        Just f -> sanitize f (map (\a -> evalExp a phi env) args)
     where
-        strict :: ([D] -> D) -> [D] -> D
-        strict f args =
-            if noneIsNothing args then f args else Nothing
+        sanitize :: ([D] -> D) -> [D] -> D
+        sanitize f args =
+            if noneIsTop args then f args else Top
 evalExp (Call fname args) phi env =
     case (lookup fname phi) of
-        Nothing -> Nothing
+        Nothing -> Bottom
         Just f  -> f (map (\a -> evalExp a phi env) args)
 
 -- | Checks if all elements in the list are not 'Nothing'.
-noneIsNothing :: [D]  -- ^ List of 'D' values.
-              -> Bool -- ^ 'True' if all elements are 'Just', 'False' otherwise.
-noneIsNothing = all isJust
+noneIsTop :: [D]  -- ^ List of 'D' values.
+              -> Bool -- ^ 'True' if there is at least one 'Top' in the input list.
+noneIsTop = any isTop
   where
-    isJust :: Maybe a -> Bool
-    isJust (Just _) = True
-    isJust Nothing  = False
+    isTop :: D -> Bool
+    isTop Top = True
+    isTop _  = False

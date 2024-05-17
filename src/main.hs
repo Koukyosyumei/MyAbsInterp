@@ -1,5 +1,4 @@
-import           AbstLang
-import           BaseLang
+import           Strictness
 import           FixedPointIteration
 
 import qualified Data.HashMap.Strict as HashMap
