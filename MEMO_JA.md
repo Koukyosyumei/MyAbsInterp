@@ -21,7 +21,7 @@ Rule-of-Signとは、抽象実行の簡単な問題であり、プログラム�
 # syntax
 
 exp ::= n           - 整数
-    | exp + exp     - 加法
+		| exp + exp     - 加法
 		| exp * exp     - 乗法
 ```
 
@@ -106,3 +106,59 @@ E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \
 \forall{s} \in Sign.  \alpha(\gamma(s)) = s 
 \forall{X} \in P(\mathcal{Z}) \setminus \empty.  \gamma(\alpha(X)) \supseteq X
 ```
+
+ここで、Sign上の加法と乗法は以下のように書くことが可能です。
+
+```
+s_1 ⊕ s_2 = \alpha(\{x_1 + x_2 | x_1 \in γ(s_1) ∧ x_2 \in γ(s_2)\}) 
+s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 \in γ(s_1) ∧ x_2 \in γ(s_2)\}) 
+```
+
+### Strictness Analysis
+
+次に、strictnessと呼ばれる性質についての解釈の例を扱います。
+
+エラーや未定義出るような値をbottom要素と呼ぶことにしましょう。ここで、ある関数$f$がstrictであるとは、その関数がbottom要素`⊥`を引数に取ったとき、bottom要素を返すことを意味します (`f(⊥) = ⊥`)。
+
+これは、関数をcalling by valueした場合とcalling by needした場合の結果が同じになることを意味します。
+
+ここで、以下のような簡単な遅延評価言語を考えます。
+
+- semantic domains
+
+$$$
+D = V_{⊥}         - values
+\phi = (D^k -> D)^n  - 関数環境
+$$$
+
+- semantic functions
+
+$$$
+E[[exp]]  : \phi -> D^k -> D : 関数環境と値の集合をとって、値を返す
+P[[prog]] : \phi
+$$$
+
+- definition
+
+$$$
+E[[c_i]] \phi v                      = const_i : i番目の定数の名前 -> i番目の定数の値                                     
+E[[x_i]] \phi v                      = v_i : i番目の変数の名前 -> i番目の変数の値                                            
+E[[a_i(e_1, ..., e_k)]] \phi v       = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v> i番目の標準関数の名前 -> その標準関数をストリクとにvで評価した結果の値
+E[[if e_1 then e_2 else e_3]] \phi v = cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v) : 制御フロー
+E[[f_i(e_1, ..., e_k)]] \phi v       = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v> : i番目のユーザー定義関数の名前 -> その関数をvで評価した時の結果の値           
+
+P[[f_1(x_1, ..., x_k) = e_1
+        .
+				.
+	 f_n(x_1, ..., x_k) = e_n]]        = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
+$$$
+
+ここで関数のストリクと評価を行う`strict`は以下のように定義される。
+
+```
+strict f<v_1, ..., v_k> = if v_1 = ⊥ ∨ .... v_k = ⊥ then ⊥ else f(v_1, ..., v_k)
+```
+
+つまり、引数に一つでもボトムが含まれている場合、ボトムを返し、そうでない場合は関数fを通常どうり評価する。
+
+
