@@ -1,19 +1,18 @@
-# 抽象実行入門
-
-
-本チュートリアルでは、"Rosendahl, Mads. Introduction to abstract interpretation. Computer Science University of Copenhagen (1995)." の内容を実装しながら解説していきます。
+本記事では、"Rosendahl, Mads. Introduction to abstract interpretation. Computer Science University of Copenhagen (1995)." の内容を実装しながら解説していきます。
 
 ## 抽象実行の概要
 
 抽象実行とは、プログラミング言語の「抽象解釈」を行うことで、その言語で書かれたプログラムの性質を推論する枠組みを意味します。
 
-本記事では、あるプログラム $p$ について、標準解釈 $I_1$ と抽象解釈 $I_2$ の間に関係 $R$ が成立することを $I_1[p] R I_2[p]$ と表記します。
+本記事では、あるプログラム $p$ について、通常の解釈 $I_1$ と抽象解釈 $I_2$ の間に関係 $R$ が成立することを $I_1[p] R I_2[p]$ と表記します。
 
-### Rule of Sign
+## Rule of Sign
 
 まず簡単な例を通して、抽象実行の雰囲気をつかんでいきましょう。
 
-Rule-of-Signとは、抽象実行の簡単な問題であり、プログラムの実行結果が正であるか負であるかを推定することを目指します。
+Rule-of-signとは、抽象実行の簡単な問題であり、プログラムの実行結果が正であるか負であるかを推定することを目指します。
+
+ここで、以下のような文法を持つシンプルなプログラミング言語を考えます。
 
 ここで、以下のような文法を持つシンプルなプログラミング言語を考えます。
 
@@ -21,23 +20,24 @@ Rule-of-Signとは、抽象実行の簡単な問題であり、プログラム�
 # syntax
 
 exp ::= n           - 整数
-		| exp + exp     - 加法
-		| exp * exp     - 乗法
+	| exp + exp     - 加法
+	| exp * exp     - 乗法
 ```
 
 この言語の標準解釈、つまりこのプログラミング言語を実行するさいの通常の解釈を以下のように定義します。
 
 ```math
-E_{std}[[exp]] : \mathcal{Z} \\\\
-
-E_{std}[[n_i]] = n_i 				 \\
-E_{std}[[exp_1 + exp_2]] = E_{std}[[exp_1]] + E_{std}[[exp_2]] \\
-E_{std}[[exp_1 * exp_2]] = E_{std}[[exp_1]] * E_{std}[[exp_2]]
+\begin{align}
+    E_{std}[[exp]] &:: \mathcal{Z} \\
+    E_{std}[[n_i]] &= n_i \\
+    E_{std}[[exp_1 + exp_2]] &= E_{std}[[exp_1]] + E_{std}[[exp_2]] \\
+    E_{std}[[exp_1 * exp_2]] &= E_{std}[[exp_1]] * E_{std}[[exp_2]]
+\end{align}
 ```
 
 次に、Rule-of-Signを解くために必要な抽象解釈を定義していきます。
 
-最初のステップとして、抽象値 $Sign = \{zero, pos, neg, num\}$ を導入します。この抽象値Sign上の加法・乗法は以下の通りに定義されます。
+最初のステップとして、抽象値 $Sign = \\{zero, pos, neg, num\\}$ を導入します。この抽象値$Sign$上の加法・乗法は以下の通りに定義されます。
 
 ```
 # 加法
@@ -67,98 +67,128 @@ num  zero  num  num  num
 
 
 ```math
-E{ros}[[exp]] : Sign \\
-
-E{ros}[[ni]] = sign(ni) \
-E{ros}[[exp_1 + exp_2]] = E{ros}[[exp_1]] ⊕ E{ros}[[exp_2]] \
-E{ros}[[exp_1 ∗ exp_2]] = E{ros}[[exp_1]] ⊗ E{ros}[[exp_2]] \
+\begin{align}
+    E_{ros}[[exp]] &:: Sign \\
+    E_{ros}[[ni]] &= sign(ni) \\
+    E_{ros}[[exp_1 + exp_2]] &= E_{ros}[[exp_1]] ⊕ E_{ros}[[exp_2]] \\
+    E_{ros}[[exp_1 ∗ exp_2]] &= E_{ros}[[exp_1]] ⊗ E_{ros}[[exp_2]]
+\end{align}
 ```
 
-ここで、関数 `sign` は、`sign(x) = if x > 0 then pos else if x < 0 then neg else zero` と定義されます。
+ここで、関数 $sign$ は、`sign(x) = if x > 0 then pos else if x < 0 then neg else zero` と定義されます。
 
-最後に標準解釈と抽象解釈の間にどんな関係が成り立つかを確認します。
+さて、ここで標準解釈と抽象解釈の間にはどんな関係が成立するでしょうか?
 
 - 抽象値 -> 整数
 
 ```math
-\gamma : Sign -> P(\mathcal{Z}) \setminus \{\empty\}
-
-\gamma(zero) = \{0\} 
-\gamma(pos) = \{x | x > 0\} 
-\gamma(neg) = \{x | x < 0\} 
-\gamma(num) = \mathcal{Z}
+\begin{align}
+    &\gamma :: Sign \rightarrow P(\mathcal{Z}) \setminus \{\emptyset\} \\
+    
+    &\gamma(zero) = \{0\} \\
+    &\gamma(pos) = \{x | x > 0\} \\ 
+    &\gamma(neg) = \{x | x < 0\} \\
+    &\gamma(num) = \mathcal{Z}
+\end{align}
 ```
 
 - 整数 -> 実数
 
 ```math
-\alpha : P(\mathcal{Z}) \setminus \{\empty\} -> Sign 
-
-\alpha(X) = zero if  (X = {0}) 
-     			= pos  if  (\all{x \in X}. x > 0) 
-		      = neg  if  (\all{x \in X}. x < 0) 
-					= num  otherwise
+\begin{align}
+\alpha &:: P(\mathcal{Z}) \setminus \{\emptyset\} \rightarrow Sign \\
+\alpha(X) &= zero \quad (X = {0}) \\
+          &= pos  \quad (\forall{x \in X}. x > 0) \\
+		  &= neg  \quad (\forall{x \in X}. x < 0) \\
+		  &= num  \quad \text{otherwise}
+\end{align}
 ```
 
 よって、標準解釈と抽象解釈の間には以下の関係が成立します。
 
-```
+```math
 \forall{s} \in Sign.  \alpha(\gamma(s)) = s 
-\forall{X} \in P(\mathcal{Z}) \setminus \empty.  \gamma(\alpha(X)) \supseteq X
+```
+```math
+\forall{X} \in P(\mathcal{Z}) \setminus \emptyset.  \gamma(\alpha(X)) \supseteq X
 ```
 
 ここで、Sign上の加法と乗法は以下のように書くことが可能です。
 
-```
-s_1 ⊕ s_2 = \alpha(\{x_1 + x_2 | x_1 \in γ(s_1) ∧ x_2 \in γ(s_2)\}) 
-s_1 ⊗ s_2 = \alpha(\{x_1 ∗ x_2 | x_1 \in γ(s_1) ∧ x_2 \in γ(s_2)\}) 
+```math
+\begin{align}
+s_1 ⊕ s_2 &= \alpha(\{x_1 + x_2 | x_1 \in \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) \\
+s_1 ⊗ s_2 &= \alpha(\{x_1 ∗ x_2 | x_1 \in \gamma(s_1) ∧ x_2 \in \gamma(s_2)\}) 
+\end{align}
 ```
 
-### Strictness Analysis
+## Strictness Analysis
 
 次に、strictnessと呼ばれる性質についての解釈の例を扱います。
 
-エラーや未定義出るような値をbottom要素と呼ぶことにしましょう。ここで、ある関数$f$がstrictであるとは、その関数がbottom要素`⊥`を引数に取ったとき、bottom要素を返すことを意味します (`f(⊥) = ⊥`)。
-
-これは、関数をcalling by valueした場合とcalling by needした場合の結果が同じになることを意味します。
+エラーや未定義である値をbottom要素と呼ぶことにしましょう。ここで、ある関数$f$がstrictであるとは、その関数がbottom要素$⊥$を引数に取ったとき、bottom要素を返すことを意味します ($f(⊥) = ⊥$)。
 
 ここで、以下のような簡単な遅延評価言語を考えます。
 
 - semantic domains
 
-$$$
-D = V_{⊥}         - values
-\phi = (D^k -> D)^n  - 関数環境
-$$$
+```math
+\begin{align}
+    D &= V_{⊥}         \\
+\phi &= (D^k \rightarrow D)^n  \\
+\end{align}
+```
+
+ここで、$D$は値の集合、$\phi$は関数環境を意味します。
 
 - semantic functions
 
-$$$
-E[[exp]]  : \phi -> D^k -> D : 関数環境と値の集合をとって、値を返す
-P[[prog]] : \phi
-$$$
+```math
+\begin{align}
+    E[[exp]]  &:: \phi \rightarrow D^k \rightarrow D  \\
+    P[[prog]] &:: \phi
+\end{align}
+```
 
 - definition
 
-$$$
-E[[c_i]] \phi v                      = const_i : i番目の定数の名前 -> i番目の定数の値                                     
-E[[x_i]] \phi v                      = v_i : i番目の変数の名前 -> i番目の変数の値                                            
-E[[a_i(e_1, ..., e_k)]] \phi v       = strict basic_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v> i番目の標準関数の名前 -> その標準関数をストリクとにvで評価した結果の値
-E[[if e_1 then e_2 else e_3]] \phi v = cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v) : 制御フロー
-E[[f_i(e_1, ..., e_k)]] \phi v       = f_i<E[[e_1]] \phi v, ..., E[[e_k]] \phi v> : i番目のユーザー定義関数の名前 -> その関数をvで評価した時の結果の値           
+```math
+\begin{align}
+    E[[c_i]] \phi v  &= const_i \quad (i番目の定数の名前 \rightarrow i番目の定数の値) \\                                     
+E[[x_i]] \phi v      &= v_i \quad (i番目の変数の名前 \rightarrow i番目の変数の値) \\                                            
+E[[a_i(e_1, ..., e_k)]] \phi v  &= \text{strict } basic_i(E[[e_1]] \phi v, ..., E[[e_k]] \phi v) \quad (i番目の標準関数の名前 \rightarrow その標準関数をストリクトにvで評価した結果の値) \\
+E[[\text{if } e_1 \text{ then } e_2 \text{ else } e_3]] \phi v &= cond(E[[e_1]] \phi v, E[[e_2]] \phi v, E[[e_3]] \phi v) \quad (制御フロー) \\
+E[[f_i(e_1, ..., e_k)]] \phi v       &= f_i(E[[e_1]] \phi v, ..., E[[e_k]] \phi v) \quad (i番目のユーザー定義関数の名前 \rightarrow その関数をvで評価した時の結果の値)          \\ 
 
-P[[f_1(x_1, ..., x_k) = e_1
-        .
-				.
-	 f_n(x_1, ..., x_k) = e_n]]        = fix \lambda \phi. <E[[e_1]] \phi, ..., E[[e_2]] \phi>
-$$$
-
-ここで関数のストリクと評価を行う`strict`は以下のように定義される。
-
-```
-strict f<v_1, ..., v_k> = if v_1 = ⊥ ∨ .... v_k = ⊥ then ⊥ else f(v_1, ..., v_k)
+P[[f_1(x_1, ..., x_k) = e_1, \\..\\..\\ &\\ f_n(x_1, ..., x_k) = e_n]]  &= fix \lambda \phi. (E[[e_1]] \phi, ..., E[[e_2]] \phi)
+\end{align}
 ```
 
-つまり、引数に一つでもボトムが含まれている場合、ボトムを返し、そうでない場合は関数fを通常どうり評価する。
+ここで関数のストリクト評価を行う`strict`は以下のように定義されます。
 
+```math
+\text{strict } f(v_1, ..., v_k) = \text{ if } v_1 = ⊥ ∨ .... v_k = ⊥ \text{ then } ⊥ \text{ else } f(v_1, ..., v_k)
+```
+
+つまり、引数に一つでもボトムが含まれている場合、ボトムを返し、そうでない場合は関数fを通常通り評価します。
+
+- 抽象領域
+
+関数のストリクト性を検査するために、二値から成る抽象領域 $\mathcal{2} = \\{0, 1\\}$ (ただし、$0 \sqsubseteq 1$)を導入します。この抽象領域を、$D$と以下のように対応付けます。
+
+```math
+\begin{align}
+\alpha &: D \rightarrow \mathcal{2} \\
+\alpha(d) &= \text{if } d = ⊥ \text{ then } 0 \text{ else } 1
+\end{align}
+```
+
+さらに、この抽象領域上で羽化の二つの演算子を導入します。
+
+```math
+\begin{align}
+  d_1 \land d_2 &= min(d_1, d_2) \\
+  d_1 \lor d_2 &= max(d_1, d_2)
+\end{align}
+```
 
