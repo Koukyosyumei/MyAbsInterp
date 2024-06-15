@@ -292,7 +292,7 @@ $D$ および $E$ がcpoであるとする。この時、関数 $f: D \rightarro
 
 - 連続性
 
-単調関数が、$\bigsqcup_{n \in w} f(d_n) = f(\bigsqcup_{n \in w} d_n)$ をD上の任意のw鎖について満たすならば、その関数は連続であるという。
+単調関数が、 $\bigsqcup_{n \in w} f(d_n) = f(\bigsqcup_{n \in w} d_n)$ をD上の任意のw鎖について満たすならば、その関数は連続であるという。
 
 - 不動点
 
@@ -304,7 +304,11 @@ fix(f) = \bigsqcup_{n \in w} f^{n}(⊥)
 
 - 包含
 
-$D$ をcpoとする。この時、部分集合 $P \subseteq D$ が包含であるとは、 $D$ 上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ について、 $\forall{n \in w} d_n \in P \Rightarrow \bigsqcup_{n \in w} d_n \in P$ を満たすことをいう。
+$D$ をcpoとする。この時、部分集合 $P \subseteq D$ が包含であるとは、 $D$ 上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ について、 $\forall{n \in w}.d_n \in P \Rightarrow \bigsqcup_{n \in w} d_n \in P$ を満たすことをいう。
+
+- 不動点帰納法
+
+最小限⊥を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ および $D$ の包含部分集合 $P$ について、$⊥ \in P$ かつ $\forall{x \in D}. x \in P \Rightarrow F(x) \in P$ であるなら、 $fix(F) \in P$ となる。
 
 
 
