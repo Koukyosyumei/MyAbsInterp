@@ -253,13 +253,13 @@ cond^♯(b, , y) = b \land (x \lor y)
 
 ```math
 \begin{align}
-E^♯[[exp]] &: (\mathcal{2}^k -> \mathcal{2})^n -> \mathcal{2}^k -> \mathcal{2} \\
-P^♯[[exp]] &: (\mathcal{2}^k -> \mathcal{2})^n \\
+E^♯[[exp]] &: (\mathcal{2}^k \rightarrow \mathcal{2})^n \rightarrow \mathcal{2}^k \rightarrow \mathcal{2} \\
+P^♯[[exp]] &: (\mathcal{2}^k \rightarrow \mathcal{2})^n \\ \\
 
 E^♯[[c_i]]\phi v                      &= 1 \\
 E^♯[[x_i]]\phi v                      &= v_i \\
-E^♯[[a_i(e_1, ..., e_k)]]\phi v       &= E^♯[[e_1]]\phi v ∧ · · · ∧ E^♯[[e_k]]\phi v \\ 
-E^♯[[if e_1 then e_2 else e_3]]\phi v &= E^♯[[e_1]]\phi v ∧ (E^♯[[e_2]]\phi v ∨ E^♯[[e_3]]\phi v) \\
+E^♯[[a_i(e_1, ..., e_k)]]\phi v       &= E^♯[[e_1]]\phi v \land · · · \land E^♯[[e_k]]\phi v \\ 
+E^♯[[\text{ if } e_1 \text{ then } e_2 \text{ else } e_3]]\phi v &= E^♯[[e_1]]\phi v ∧ (E^♯[[e_2]]\phi v \lor E^♯[[e_3]]\phi v) \\
 E^♯[[f_i(e_1, ..., e_k)]]\phi v       &= φ_i<E^♯[[e_1]]\phi v, ..., E^♯[[e_k]]φv>  \\
 
 P^♯[[f_1(x_1, ..., x_k) = e_1 \\
@@ -268,6 +268,14 @@ P^♯[[f_1(x_1, ..., x_k) = e_1 \\
                . \\
      f_n(x_1, ..., x_k) = e_n]]   &= fix \lambda \phi. <E^♯[[e_1]]\phi, ..., E^♯[[e_k]]\phi>
 \end{align}
+```
+
+- Correctness
+
+次に、上記の抽象解釈 $P^♯$ が以下を満たすことを証明します。
+
+```math
+\forall{\rho, i}: \alpha((P[[p]] ↓ i)\rho) \sqsubseteq (P^♯[[p]] ↓ i)<\alpha(\rho_1), ..., \alpha(\rho_k)>
 ```
 
 
