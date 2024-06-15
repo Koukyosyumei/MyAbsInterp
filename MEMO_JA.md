@@ -192,7 +192,7 @@ P[[f_1(x_1, ..., x_k) = e_1, \\..\\..\\ &\\ f_n(x_1, ..., x_k) = e_n]]  &= fix \
 \end{align}
 ```
 
-- 理想的な抽象化
+### 理想的な抽象化
 
 今、$f : D^k \rightarrow D$ のストリクト性を調べるとします。ここで、以下を満たすような抽象領域上の関数 $f'$ が存在すると仮定します。
 
@@ -215,7 +215,7 @@ P[[f_1(x_1, ..., x_k) = e_1, \\..\\..\\ &\\ f_n(x_1, ..., x_k) = e_n]]  &= fix \
 
 となり、このような $g'$ を定めることはできないことが分かります。
 
-- 近似
+### 近似
 
 そこで、 $\alpha(f(d_1, ..., d_k))$ の値そのものではなく、上界もしくは下界に注目します。
 
@@ -247,7 +247,7 @@ cond^♯(b, , y) = b \land (x \lor y)
 
 これは、条件分岐が定義済みの出力を返すためには、条件そのものおよび、分岐の少なくとも片方が定義済みである必要があることを意味している。
 
-- 抽象解釈
+### 抽象解釈
 
 以上の議論を基に、上界を用いた抽象解釈を以下のように定める。
 
@@ -260,23 +260,37 @@ E^♯[[c_i]]\phi v                      &= 1 \\
 E^♯[[x_i]]\phi v                      &= v_i \\
 E^♯[[a_i(e_1, ..., e_k)]]\phi v       &= E^♯[[e_1]]\phi v \land · · · \land E^♯[[e_k]]\phi v \\ 
 E^♯[[\text{ if } e_1 \text{ then } e_2 \text{ else } e_3]]\phi v &= E^♯[[e_1]]\phi v ∧ (E^♯[[e_2]]\phi v \lor E^♯[[e_3]]\phi v) \\
-E^♯[[f_i(e_1, ..., e_k)]]\phi v       &= φ_i<E^♯[[e_1]]\phi v, ..., E^♯[[e_k]]φv>  \\
+E^♯[[f_i(e_1, ..., e_k)]]\phi v       &= \phi_i \langle E^♯[[e_1]]\phi v, ..., E^♯[[e_k]]φv \rangle  \\
 
 P^♯[[f_1(x_1, ..., x_k) = e_1 \\
                . \\
                . \\
                . \\
-     f_n(x_1, ..., x_k) = e_n]]   &= fix \lambda \phi. <E^♯[[e_1]]\phi, ..., E^♯[[e_k]]\phi>
+     f_n(x_1, ..., x_k) = e_n]]   &= fix \lambda \phi. \langle E^♯[[e_1]]\phi, ..., E^♯[[e_k]]\phi \rangle
 \end{align}
 ```
 
-- Correctness
+### Correctness
 
 次に、上記の抽象解釈 $P^♯$ が以下を満たすことを証明します。
 
 ```math
 \forall{\rho, i}: \alpha((P[[p]] ↓ i)\rho) \sqsubseteq (P^♯[[p]] ↓ i)<\alpha(\rho_1), ..., \alpha(\rho_k)>
 ```
+
+証明の前にいくつかの離散数学の定義を復習しておきましょう。
+
+- cpo
+
+半順序 $\langle D, \sqsubseteq \rangle$ は、D上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ の下界 $\bigsqcup_{n \in w} d_n$ がD内にあるならば、cpoである。
+
+
+- 単調性
+
+$D$ および $E$ がcpoであるとする。この時、関数 $f: D \rightarrow E$ は、 
+ $\forall{d, d'} \in D. d \sqsubseteq d' \then f(d) \sqsubseteq f(d')$ が満たされるなら、単調である。
+
+
 
 
 
