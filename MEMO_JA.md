@@ -308,7 +308,7 @@ $D$ をcpoとする。この時、部分集合 $P \subseteq D$ が包含であ�
 
 - 不動点帰納法
 
-最小限⊥を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ および $D$ の包含部分集合 $P$ について、$⊥ \in P$ かつ $\forall{x \in D}. x \in P \Rightarrow F(x) \in P$ であるなら、 $fix(F) \in P$ となる。
+最小限⊥を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ および $D$ の包含部分集合 $P$ について、 $⊥ \in P$ かつ $\forall{x \in D}. x \in P \Rightarrow F(x) \in P$ であるなら、 $fix(F) \in P$ となる。
 
 
 
