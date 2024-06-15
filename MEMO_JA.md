@@ -278,17 +278,34 @@ P^♯[[f_1(x_1, ..., x_k) = e_1 \\
 \forall{\rho, i}: \alpha((P[[p]] ↓ i)\rho) \sqsubseteq (P^♯[[p]] ↓ i)<\alpha(\rho_1), ..., \alpha(\rho_k)>
 ```
 
-証明の前にいくつかの離散数学の定義を復習しておきましょう。
+証明の前にいくつかの数学の定義を復習しておきましょう。
 
 - cpo
 
-半順序 $\langle D, \sqsubseteq \rangle$ は、D上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ の下界 $\bigsqcup_{n \in w} d_n$ がD内にあるならば、cpoである。
+半順序 $\langle D, \sqsubseteq \rangle$ は、D上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ の最小上界 $\bigsqcup_{n \in w} d_n$ がD内にあるならば、cpoであるという。
 
 
 - 単調性
 
 $D$ および $E$ がcpoであるとする。この時、関数 $f: D \rightarrow E$ は、 
- $\forall{d, d'} \in D. d \sqsubseteq d' \then f(d) \sqsubseteq f(d')$ が満たされるなら、単調である。
+ $\forall{d, d'} \in D. d \sqsubseteq d' \Rightarrow f(d) \sqsubseteq f(d')$ が満たされるなら、単調であるという。
+
+- 連続性
+
+単調関数が、$\bigsqcup_{n \in w} f(d_n) = f(\bigsqcup_{n \in w} d_n)$ をD上の任意のw鎖について満たすならば、その関数は連続であるという。
+
+- 不動点
+
+最小元を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ の不動点を以下のように定める。
+
+```math
+fix(f) = \bigsqcup_{n \in w} f^{n}(⊥)
+```
+
+- 包含
+
+$D$ をcpoとする。この時、部分集合 $P \subseteq D$ が包含であるとは、 $D$ 上の任意のw鎖 $d_0 \sqsubseteq d_1 \sqsubseteq ... \sqsubseteq d_n \sqsubseteq ....$ について、 $\forall{n \in w} d_n \in P \Rightarrow \bigsqcup_{n \in w} d_n \in P$ を満たすことをいう。
+
 
 
 
