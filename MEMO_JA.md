@@ -275,7 +275,7 @@ P^♯[[f_1(x_1, ..., x_k) = e_1 \\
 次に、上記の抽象解釈 $P^♯$ が以下を満たすことを証明します。
 
 ```math
-\forall{\rho, i}: \alpha((P[[p]] ↓ i)\rho) \sqsubseteq (P^♯[[p]] ↓ i)<\alpha(\rho_1), ..., \alpha(\rho_k)>
+\forall{\rho, i}: \alpha((P[[p]] ↓ i)\rho) \sqsubseteq (P^♯[[p]] ↓ i) \langle \alpha(\rho_1), ..., \alpha(\rho_k) \rangle
 ```
 
 証明の前にいくつかの数学の定義を復習しておきましょう。
@@ -308,7 +308,7 @@ $D$ をcpoとする。この時、部分集合 $P \subseteq D$ が包含であ�
 
 - 不動点帰納法
 
-最小限⊥を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ および $D$ の包含部分集合 $P$ について、 $⊥ \in P$ かつ $\forall{x \in D}. x \in P \Rightarrow F(x) \in P$ であるなら、 $fix(F) \in P$ となる。
+最小限⊥を持つcpoである $D$ 上の連続関数 $f: D \rightarrow D$ および $D$ の包含部分集合 $P$ について、 $⊥ \in P$ かつ $\forall{x \in D}. x \in P \Rightarrow f(x) \in P$ であるなら、 $fix(f) \in P$ となる。
 
 
 
